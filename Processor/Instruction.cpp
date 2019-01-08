@@ -350,21 +350,25 @@ void BaseInstruction::parse_operands(istream& s, int pos)
         n = get_int(s);
         break;
       case REQBL:
-        n = get_int(s);
+          n = get_int(s);
+    	  /*
         if (n > 0 && gfp::pr() < bigint(1) << (n-1))
           {
             cout << "Tape requires prime of bit length " << n << endl;
             throw invalid_params();
           }
+          */
         break;
       case GREQBL:
-        n = get_int(s);
+          n = get_int(s);
+    	  /*
         if (n > 0 && gf2n::degree() < int(n))
           {
             stringstream ss;
             ss << "Tape requires prime of bit length " << n << endl;
             throw Processor_Error(ss.str());
           }
+          */
         break;
       case E_INPUT_SHARE_INT:
       case GE_INPUT_SHARE_INT:

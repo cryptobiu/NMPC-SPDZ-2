@@ -52,7 +52,7 @@ class gfp
   static int size() { return t() * sizeof(mp_limb_t); }
 
   void assign(const gfp& g) {
-	  a=g.a;
+	  //a=g.a;
 #if defined(EXT_NEC_RING)
 	  a_ring = g.a_ring;
 #endif

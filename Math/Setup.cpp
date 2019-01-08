@@ -133,8 +133,9 @@ string get_prep_dir(int nparties, int lg2p, int gf2ndegree)
 }
 
 // Only read enough to initialize the fields (i.e. for OT offline or online phase only)
-void read_setup(const string& dir_prefix)
+void read_setup(const string& /*dir_prefix*/)
 {
+	/*
   int lg2;
   bigint p;
 
@@ -154,10 +155,11 @@ void read_setup(const string& dir_prefix)
 
   gfp::init_field(p);
   gf2n::init_field(lg2);
+  */
 }
 
-void read_setup(int nparties, int lg2p, int gf2ndegree)
+void read_setup(int /*nparties*/, int /*lg2p*/, int /*gf2ndegree*/)
 {
-  string dir = get_prep_dir(nparties, lg2p, gf2ndegree);
-  read_setup(dir);
+  //string dir = get_prep_dir(nparties, lg2p, gf2ndegree);
+  //read_setup(dir);
 }

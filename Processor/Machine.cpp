@@ -16,7 +16,7 @@
 using namespace std;
 
 Machine::Machine(int my_number, Names& playerNames,
-    string progname_str, string memtype, int lgp, int lg2, bool direct,
+    string progname_str, string memtype, int /*lgp*/, int /*lg2*/, bool direct,
     int opening_sum, bool parallel, bool receive_threads, int max_broadcast)
   : my_number(my_number), N(playerNames), nthreads(0), tn(0), numt(0), usage_unknown(false),
     progname(progname_str), direct(direct), opening_sum(opening_sum), parallel(parallel),
@@ -28,33 +28,33 @@ Machine::Machine(int my_number, Names& playerNames,
     this->max_broadcast = N.num_players();
 
   // Set up the fields
-  prep_dir_prefix = get_prep_dir(N.num_players(), lgp, lg2);
-  read_setup(prep_dir_prefix);
+//  prep_dir_prefix = get_prep_dir(N.num_players(), lgp, lg2);
+//  read_setup(prep_dir_prefix);
 
   char filename[1024];
-  int nn;
+//  int nn;
 
-  sprintf(filename, (prep_dir_prefix + "Player-MAC-Keys-P%d").c_str(), my_number);
-  inpf.open(filename);
-  if (inpf.fail())
-  {
-    cerr << "Could not open MAC key file. Perhaps it needs to be generated?\n";
-    throw file_error(filename);
-  }
-  inpf >> nn;
-  if (nn!=N.num_players())
-    { cerr << "KeyGen was last run with " << nn << " players." << endl;
-      cerr << "  - You are running Online with " << N.num_players() << " players." << endl;
-      exit(1);
-    }
-
-  alphapi.input(inpf,true);
-  alpha2i.input(inpf,true);
-  // statstics comment out (start)
+//  sprintf(filename, (prep_dir_prefix + "Player-MAC-Keys-P%d").c_str(), my_number);
+//  inpf.open(filename);
+//  if (inpf.fail())
+//  {
+//    cerr << "Could not open MAC key file. Perhaps it needs to be generated?\n";
+//    throw file_error(filename);
+//  }
+//  inpf >> nn;
+//  if (nn!=N.num_players())
+//    { cerr << "KeyGen was last run with " << nn << " players." << endl;
+//      cerr << "  - You are running Online with " << N.num_players() << " players." << endl;
+//      exit(1);
+//    }
+//
+//  alphapi.input(inpf,true);
+//  alpha2i.input(inpf,true);
+//  // statstics comment out (start)
 //  cerr << "MAC Key p = " << alphapi << endl;
 //  cerr << "MAC Key 2 = " << alpha2i << endl;
-  // statstics comment out (end)
-  inpf.close();
+//  // statstics comment out (end)
+//  inpf.close();
 
 
   // Initialize the global memory
