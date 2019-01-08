@@ -124,7 +124,7 @@ gfp receive_result(vector<int>& sockets, int nparties)
         os.Receive(sockets[i]);
         for (unsigned int j = 0; j < 3; j++)
         {
-            gfp value;
+            gfp value(0);
             value.unpack(os);
             output_values[j] += value;            
         }

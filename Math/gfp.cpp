@@ -7,17 +7,17 @@
 
 Zp_Data gfp::ZpD;
 
-void gfp::almost_randomize(PRNG& G)
+void gfp::almost_randomize(PRNG& /*G*/)
 {
-  G.get_octets((octet*)a.x,t()*sizeof(mp_limb_t));
-  a.x[t()-1]&=ZpD.mask;
+  //G.get_octets((octet*)a.x,t()*sizeof(mp_limb_t));
+  //a.x[t()-1]&=ZpD.mask;
 }
 
 void gfp::AND(const gfp& x,const gfp& y)
 {
   bigint bi1,bi2;
-  to_bigint(bi1,x);
-  to_bigint(bi2,y);
+  to_bigint(bi1,x,true);
+  to_bigint(bi2,y,true);
   mpz_and(bi1.get_mpz_t(), bi1.get_mpz_t(), bi2.get_mpz_t());
   to_gfp(*this, bi1);
 }
@@ -25,8 +25,8 @@ void gfp::AND(const gfp& x,const gfp& y)
 void gfp::OR(const gfp& x,const gfp& y)
 {
   bigint bi1,bi2;
-  to_bigint(bi1,x);
-  to_bigint(bi2,y);
+  to_bigint(bi1,x,true);
+  to_bigint(bi2,y,true);
   mpz_ior(bi1.get_mpz_t(), bi1.get_mpz_t(), bi2.get_mpz_t());
   to_gfp(*this, bi1);
 }
@@ -34,8 +34,8 @@ void gfp::OR(const gfp& x,const gfp& y)
 void gfp::XOR(const gfp& x,const gfp& y)
 {
   bigint bi1,bi2;
-  to_bigint(bi1,x);
-  to_bigint(bi2,y);
+  to_bigint(bi1,x,true);
+  to_bigint(bi2,y,true);
   mpz_xor(bi1.get_mpz_t(), bi1.get_mpz_t(), bi2.get_mpz_t());
   to_gfp(*this, bi1);
 }
@@ -43,7 +43,7 @@ void gfp::XOR(const gfp& x,const gfp& y)
 void gfp::AND(const gfp& x,const bigint& y)
 {
   bigint bi;
-  to_bigint(bi,x);
+  to_bigint(bi,x,true);
   mpz_and(bi.get_mpz_t(), bi.get_mpz_t(), y.get_mpz_t());
   to_gfp(*this, bi);
 }
@@ -51,7 +51,7 @@ void gfp::AND(const gfp& x,const bigint& y)
 void gfp::OR(const gfp& x,const bigint& y)
 {
   bigint bi;
-  to_bigint(bi,x);
+  to_bigint(bi,x,true);
   mpz_ior(bi.get_mpz_t(), bi.get_mpz_t(), y.get_mpz_t());
   to_gfp(*this, bi);
 }
@@ -59,7 +59,7 @@ void gfp::OR(const gfp& x,const bigint& y)
 void gfp::XOR(const gfp& x,const bigint& y)
 {
   bigint bi;
-  to_bigint(bi,x);
+  to_bigint(bi,x,true);
   mpz_xor(bi.get_mpz_t(), bi.get_mpz_t(), y.get_mpz_t());
   to_gfp(*this, bi);
 }
@@ -129,7 +129,7 @@ gfp gfp::sqrRoot()
 {
     // Temp move to bigint so as to call sqrRootMod
     bigint ti;
-    to_bigint(ti, *this);
+    to_bigint(ti, *this,true);
     ti = sqrRootMod(ti, ZpD.pr);
     if (!isOdd(ti))
         ti = ZpD.pr - ti;

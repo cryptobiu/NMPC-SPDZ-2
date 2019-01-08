@@ -21,7 +21,7 @@
 // Convert modp to signed bigint of a given bit length
 void to_signed_bigint(bigint& bi, const gfp& x, int len)
 {
-  to_bigint(bi, x);
+  to_bigint(bi, x,true);
   int neg;
   // get sign and abs(x)
   bigint p_half=(gfp::pr()-1)/2;
@@ -921,14 +921,14 @@ void Instruction::execute(Processor& Proc) const
         Proc.write_C2(r[0],Proc.temp.ans2);
         break;
       case MODC:
-        to_bigint(Proc.temp.aa, Proc.read_Cp(r[1]));
-        to_bigint(Proc.temp.aa2, Proc.read_Cp(r[2]));
+        to_bigint(Proc.temp.aa, Proc.read_Cp(r[1]), true);
+        to_bigint(Proc.temp.aa2, Proc.read_Cp(r[2]), true);
         mpz_fdiv_r(Proc.temp.aa.get_mpz_t(), Proc.temp.aa.get_mpz_t(), Proc.temp.aa2.get_mpz_t());
         to_gfp(Proc.temp.ansp, Proc.temp.aa);
         Proc.write_Cp(r[0],Proc.temp.ansp);
         break;
       case LEGENDREC:
-        to_bigint(Proc.temp.aa, Proc.read_Cp(r[1]));
+        to_bigint(Proc.temp.aa, Proc.read_Cp(r[1]), true);
         Proc.temp.aa = mpz_legendre(Proc.temp.aa.get_mpz_t(), gfp::pr().get_mpz_t());
         to_gfp(Proc.temp.ansp, Proc.temp.aa);
         Proc.write_Cp(r[0], Proc.temp.ansp);
@@ -936,7 +936,7 @@ void Instruction::execute(Processor& Proc) const
       case DIGESTC:
       {
         octetStream o;
-        to_bigint(Proc.temp.aa, Proc.read_Cp(r[1]));
+        to_bigint(Proc.temp.aa, Proc.read_Cp(r[1]), true);
 
         to_gfp(Proc.temp.ansp, Proc.temp.aa);
         Proc.temp.ansp.pack(o);
@@ -962,7 +962,7 @@ void Instruction::execute(Processor& Proc) const
         Proc.write_C2(r[0],Proc.temp.ans2);
         break;
       case MODCI:
-        to_bigint(Proc.temp.aa, Proc.read_Cp(r[1]));
+        to_bigint(Proc.temp.aa, Proc.read_Cp(r[1]), true);
         to_gfp(Proc.temp.ansp, mpz_fdiv_ui(Proc.temp.aa.get_mpz_t(), n));
         Proc.write_Cp(r[0],Proc.temp.ansp);
         break;
@@ -1347,7 +1347,7 @@ void Instruction::execute(Processor& Proc) const
         break;
       // Note: Fp version has different semantics for NOTC than GNOTC
       case NOTC:
-        to_bigint(Proc.temp.aa, Proc.read_Cp(r[1]));
+        to_bigint(Proc.temp.aa, Proc.read_Cp(r[1]), true);
         mpz_com(Proc.temp.aa.get_mpz_t(), Proc.temp.aa.get_mpz_t());
         Proc.temp.aa2 = 1;
         Proc.temp.aa2 <<= n;
@@ -1364,7 +1364,7 @@ void Instruction::execute(Processor& Proc) const
 	#endif
         break;
       case SHLC:
-        to_bigint(Proc.temp.aa,Proc.read_Cp(r[2]));
+        to_bigint(Proc.temp.aa,Proc.read_Cp(r[2]), true);
         if (Proc.temp.aa > 63)
           throw not_implemented();
 	#ifdef DEBUG
@@ -1375,7 +1375,7 @@ void Instruction::execute(Processor& Proc) const
 	#endif
         break;
       case SHRC:
-        to_bigint(Proc.temp.aa,Proc.read_Cp(r[2]));
+        to_bigint(Proc.temp.aa,Proc.read_Cp(r[2]), true);
         if (Proc.temp.aa > 63)
           throw not_implemented();
 	#ifdef DEBUG

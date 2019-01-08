@@ -316,7 +316,7 @@ gfp receive_result(vector<int>& sockets, int nparties, commsec_t commsec, vector
 
         for (unsigned int j = 0; j < 3; j++)
         {
-            gfp value;
+            gfp value(0);
             value.unpack(os);
             output_values[j] += value;            
         }

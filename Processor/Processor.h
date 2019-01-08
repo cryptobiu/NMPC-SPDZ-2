@@ -415,7 +415,6 @@ class Processor : public ProcessorBase
     int open_input_file();
     int close_input_file();
     int read_input_line(FILE * input_file, std::string & line);
-    void mult_stop_prep_products(const vector<int>& reg, int size);
 
 
 };

@@ -24,7 +24,7 @@ using namespace std;
 
 class gfp
 {
-  modp a;
+  //modp a;
   static Zp_Data ZpD;
 
 #if defined(EXT_NEC_RING)
@@ -64,28 +64,28 @@ class gfp
 	  assignZero(a,ZpD);
 #endif
   }
-  void assign_one()         { assignOne(a,ZpD); } 
+  void assign_one()         { /*assignOne(a,ZpD);*/ }
   void assign(word aa)      {
-	  bigint b=aa; to_gfp(*this,b);
+	  //bigint b=aa; to_gfp(*this,b);
 #if defined(EXT_NEC_RING)
 	  a_ring = (SPDZEXT_VALTYPE)aa;
 #endif
   }
   void assign(long aa)      {
-	  bigint b=aa; to_gfp(*this,b);
+	  //bigint b=aa; to_gfp(*this,b);
 #if defined(EXT_NEC_RING)
 	  a_ring = (SPDZEXT_VALTYPE)aa;
 #endif
   }
   void assign(int aa)       {
-	  bigint b=aa; to_gfp(*this,b);
+	  //bigint b=aa; to_gfp(*this,b);
 #if defined(EXT_NEC_RING)
 	  a_ring = (SPDZEXT_VALTYPE)aa;
 #endif
   }
-  void assign(const char* buffer) { a.assign(buffer, ZpD.get_t()); }
+  void assign(const char* /*buffer*/) { /*a.assign(buffer, ZpD.get_t());*/ }
 
-  modp get() const          { return a; }
+  modp get() const          { modp a; return a; }
 #if defined(EXT_NEC_RING)
   void assign_ring(SPDZEXT_VALTYPE aa) { a_ring = aa; }
 
@@ -93,20 +93,20 @@ class gfp
 #endif
 
   // Assumes prD behind x is equal to ZpD
-  void assign(modp& x) { a=x; }
+  void assign(modp& /*x*/) { /*a=x;*/ }
   
-  gfp()              { assignZero(a,ZpD); }
-  gfp(const gfp& g)  { a=g.a; }
-  gfp(const modp& g) { a=g; }
+  gfp()              { /*assignZero(a,ZpD);*/ }
+  gfp(const gfp& g) : a_ring(g.a_ring)  { /*a=g.a;*/ }
+  gfp(const modp& /*g*/) { /*a=g;*/ }
   gfp(const __m128i& x) { *this=x; }
   gfp(const int128& x) { *this=x.a; }
-  gfp(const bigint& x) { to_modp(a, x, ZpD); }
+  gfp(const bigint& /*x*/) { /*to_modp(a, x, ZpD);*/ }
   gfp(int x)         { assign(x); }
   ~gfp()             { ; }
 
   gfp& operator=(const gfp& g)
     { if (&g!=this) {
-    	a=g.a;
+    	//a=g.a;
 #if defined(EXT_NEC_RING)
     	a_ring = g.a_ring;
 #endif
@@ -114,27 +114,28 @@ class gfp
       return *this;
     }
 
-  gfp& operator=(const __m128i other)
+  gfp& operator=(const __m128i /*other*/)
     {
-      memcpy(a.x, &other, sizeof(other));
+      //memcpy(a.x, &other, sizeof(other));
       return *this;
     }
 
-  void to_m128i(__m128i& ans)
+  void to_m128i(__m128i& /*ans*/)
     {
-      memcpy(&ans, a.x, sizeof(ans));
+      //memcpy(&ans, a.x, sizeof(ans));
     }
 
   __m128i to_m128i()
     {
-      return _mm_loadu_si128((__m128i*)a.x);
+	  __m128i nil;
+      return nil;//_mm_loadu_si128((__m128i*)a.x);
     }
 
 
-  bool is_zero() const            { return isZero(a,ZpD); }
-  bool is_one()  const            { return isOne(a,ZpD); }
+  bool is_zero() const            { return true;/*isZero(a,ZpD);*/ }
+  bool is_one()  const            { return false;/*isOne(a,ZpD);*/ }
   bool is_bit()  const            { return is_zero() or is_one(); }
-  bool equal(const gfp& y) const  { return areEqual(a,y.a,ZpD); }
+  bool equal(const gfp& /*y*/) const  { return true;/*areEqual(a,y.a,ZpD);*/ }
   bool operator==(const gfp& y) const { return equal(y); }
   bool operator!=(const gfp& y) const { return !equal(y); }
 
@@ -142,7 +143,7 @@ class gfp
   template <int T>
   void add(const gfp& x,const gfp& y)
     {
-	  Add<T>(a,x.a,y.a,ZpD);
+	  //Add<T>(a,x.a,y.a,ZpD);
 #if defined(EXT_NEC_RING)
 	  a_ring = x.a_ring + y.a_ring;
 #endif
@@ -150,15 +151,15 @@ class gfp
   template <int T>
   void add(const gfp& x)
     {
-	  Add<T>(a,a,x.a,ZpD);
+	  //Add<T>(a,a,x.a,ZpD);
 #if defined(EXT_NEC_RING)
 	  a_ring += x.a_ring;
 #endif
     }
   template <int T>
-  void add(void* x)
+  void add(void* /*x*/)
     {
-	  ZpD.Add<T>(a.x,a.x,(mp_limb_t*)x);
+	  //ZpD.Add<T>(a.x,a.x,(mp_limb_t*)x);
 #if defined(EXT_NEC_RING)
 #endif
     }
@@ -167,34 +168,34 @@ class gfp
     { add<T>(os.consume(size())); }
   void add(const gfp& x,const gfp& y)
     {
-	  Add(a,x.a,y.a,ZpD);
+	  //Add(a,x.a,y.a,ZpD);
 #if defined(EXT_NEC_RING)
 	  a_ring = x.a_ring + y.a_ring;
 #endif
     }
   void add(const gfp& x)
     {
-	  Add(a,a,x.a,ZpD);
+	  //Add(a,a,x.a,ZpD);
 #if defined(EXT_NEC_RING)
 	  a_ring += x.a_ring;
 #endif
     }
-  void add(void* x)
+  void add(void* /*x*/)
     {
-	  ZpD.Add(a.x,a.x,(mp_limb_t*)x);
+	  //ZpD.Add(a.x,a.x,(mp_limb_t*)x);
 #if defined(EXT_NEC_RING)
 #endif
     }
   void sub(const gfp& x,const gfp& y)
     {
-	  Sub(a,x.a,y.a,ZpD);
+	  //Sub(a,x.a,y.a,ZpD);
 #if defined(EXT_NEC_RING)
 	  a_ring = x.a_ring - y.a_ring;
 #endif
     }
   void sub(const gfp& x)
     {
-	  Sub(a,a,x.a,ZpD);
+	  //Sub(a,a,x.a,ZpD);
 #if defined(EXT_NEC_RING)
 	  a_ring -= x.a_ring;
 #endif
@@ -202,14 +203,14 @@ class gfp
   // = x * y
   void mul(const gfp& x,const gfp& y)
     {
-	  Mul(a,x.a,y.a,ZpD);
+	  //Mul(a,x.a,y.a,ZpD);
 #if defined(EXT_NEC_RING)
 	  a_ring = x.a_ring * y.a_ring;
 #endif
     }
   void mul(const gfp& x) 
     {
-	  Mul(a,a,x.a,ZpD);
+	  //Mul(a,a,x.a,ZpD);
 #if defined(EXT_NEC_RING)
 	  a_ring = a_ring * x.a_ring;
 #endif
@@ -228,24 +229,24 @@ class gfp
 
   gfp operator-() { gfp res = *this; res.negate(); return res; }
 
-  void square(const gfp& aa)
-    { Sqr(a,aa.a,ZpD); }
+  void square(const gfp& /*aa*/)
+    { /*Sqr(a,aa.a,ZpD);*/ }
   void square()
-    { Sqr(a,a,ZpD); }
+    { /*Sqr(a,a,ZpD);*/ }
   void invert()
-    { Inv(a,a,ZpD); }
-  void invert(const gfp& aa)
-    { Inv(a,aa.a,ZpD); }
+    { /*Inv(a,a,ZpD);*/ }
+  void invert(const gfp& /*aa*/)
+    { /*Inv(a,aa.a,ZpD);*/ }
   void negate() 
-    { Negate(a,a,ZpD); }
-  void power(long i)
-    { Power(a,a,i,ZpD); }
+    { /*Negate(a,a,ZpD);*/ }
+  void power(long /*i*/)
+    { /*Power(a,a,i,ZpD);*/ }
 
   // deterministic square root
   gfp sqrRoot();
 
-  void randomize(PRNG& G)
-    { a.randomize(G,ZpD); }
+  void randomize(PRNG& /*G*/)
+    { /*a.randomize(G,ZpD);*/ }
   // faster randomization, see implementation for explanation
   void almost_randomize(PRNG& G);
 
@@ -302,17 +303,17 @@ class gfp
 
   // Pack and unpack in native format
   //   i.e. Dont care about conversion to human readable form
-  void pack(octetStream& o) const
-    { a.pack(o,ZpD); }
-  void unpack(octetStream& o)
-    { a.unpack(o,ZpD); }
+  void pack(octetStream& /*o*/) const
+    { /*a.pack(o,ZpD);*/ }
+  void unpack(octetStream& /*o*/)
+    { /*a.unpack(o,ZpD);*/ }
 
 
   // Convert representation to and from a bigint number
-  friend void to_bigint(bigint& ans,const gfp& x,bool reduce=true)
-    { to_bigint(ans,x.a,x.ZpD,reduce); }
-  friend void to_gfp(gfp& ans,const bigint& x)
-    { to_modp(ans.a,x,ans.ZpD); }
+  friend void to_bigint(bigint& /*ans*/,const gfp& /*x*/,bool /*reduce=true*/)
+    { /*to_bigint(ans,x.a,x.ZpD,reduce);*/ }
+  friend void to_gfp(gfp& /*ans*/,const bigint& /*x*/)
+    { /*to_modp(ans.a,x,ans.ZpD);*/ }
 };
 
 

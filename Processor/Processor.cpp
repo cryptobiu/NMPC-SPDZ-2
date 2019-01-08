@@ -1375,8 +1375,6 @@ void Processor::Ext_Mult_Stop(const vector<int>& reg, int size)
 	prep_shares(reg, Sh_PO, size);
 	import_shares(mult_product, Sh_PO);
 	load_shares(reg, Sh_PO, size);
-#else
-	mult_stop_prep_products(reg, size);
 #endif
 	sent += reg.size() * size;
 	rounds++;
@@ -1508,42 +1506,6 @@ void Processor::Ext_BOpen_Stop(const vector<int>& reg, int size)
 	PO.resize(sz*size);
 	import_clears(bopen_clears, PO);
 	load_clears(reg, PO, C, size);
-}
-
-void Processor::mult_stop_prep_products(const vector<int>& reg, int size)
-{
-	bigint b;
-	gfp mac, value;
-	if (size>1)
-	{
-		size_t product_idx = 0;
-		for (typename vector<int>::const_iterator reg_it=reg.begin(); reg_it!=reg.end(); reg_it++)
-		{
-			vector<Share<gfp> >::iterator insert_point=get_S<gfp>().begin()+*reg_it;
-			for(int i = 0; i < size; ++i)
-			{
-				mpz_import(b.get_mpz_t(), zp_word64_size, share_port_order, share_port_size, share_port_endian,
-						   share_port_nails, mult_product.data + (product_idx * mult_product.size));
-				to_gfp(value, b);
-				mac.mul(MCp.get_alphai(), value);
-				(*(insert_point + i)).set_share(value);
-				(*(insert_point + i)).set_share(mac);
-			}
-		}
-	}
-	else
-	{
-		int sz=reg.size();
-		for(int i = 0; i < sz; ++i)
-		{
-			mpz_import(b.get_mpz_t(), zp_word64_size, share_port_order, share_port_size, share_port_endian,
-					   share_port_nails, mult_product.data + (i * mult_product.size));
-			to_gfp(value, b);
-			mac.mul(MCp.get_alphai(), value);
-			get_S_ref<gfp>(reg[i]).set_share(value);
-			get_S_ref<gfp>(reg[i]).set_share(mac);
-		}
-	}
 }
 
 size_t Processor::get_zp_word64_size()

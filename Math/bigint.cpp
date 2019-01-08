@@ -98,7 +98,7 @@ int powerMod(int x,int e,int p)
 
 bigint::bigint(const gfp& x)
 {
-  to_bigint(*this, x);
+  to_bigint(*this, x,true);
 }
 
 
