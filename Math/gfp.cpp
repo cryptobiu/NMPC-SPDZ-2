@@ -5,7 +5,7 @@
 
 #include "Exceptions/Exceptions.h"
 
-Zp_Data gfp::ZpD;
+//Zp_Data gfp::ZpD;
 
 void gfp::almost_randomize(PRNG& /*G*/)
 {
@@ -128,12 +128,12 @@ void gfp::SHR(const gfp& x,const bigint& n)
 gfp gfp::sqrRoot()
 {
     // Temp move to bigint so as to call sqrRootMod
-    bigint ti;
+    /*bigint ti;
     to_bigint(ti, *this,true);
     ti = sqrRootMod(ti, ZpD.pr);
     if (!isOdd(ti))
-        ti = ZpD.pr - ti;
+        ti = ZpD.pr - ti;*/
     gfp temp;
-    to_gfp(temp, ti);
+    //to_gfp(temp, ti);
     return temp;
 }

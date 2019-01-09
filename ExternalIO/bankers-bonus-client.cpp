@@ -107,7 +107,7 @@ void initialise_fields(const string& dir_prefix)
 
   inpf.close();
 
-  gfp::init_field(p);
+  //gfp::init_field(p);
   gf2n::init_field(lg2);
 }
 

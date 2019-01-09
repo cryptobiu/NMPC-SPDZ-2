@@ -25,7 +25,7 @@ using namespace std;
 class gfp
 {
   //modp a;
-  static Zp_Data ZpD;
+  //static Zp_Data ZpD;
 
 #if defined(EXT_NEC_RING)
   SPDZEXT_VALTYPE a_ring;
@@ -36,14 +36,14 @@ class gfp
 
   typedef gfp value_type;
 
-  static void init_field(const bigint& p,bool mont=true)
-    { ZpD.init(p,mont); }
+  static void init_field(const bigint& /*p*/,bool /*mont=true*/)
+    { /*ZpD.init(p,mont);*/ }
   static bigint pr()   
-    { return ZpD.pr; }
+    { return 0;/*ZpD.pr;*/ }
   static int t()
-    { return ZpD.get_t();  }
-  static Zp_Data& get_ZpD()
-    { return ZpD; }
+    { return 0;/*ZpD.get_t();*/  }
+  /*static Zp_Data& get_ZpD()
+    { return ZpD; }*/
 
   static DataFieldType field_type() { return DATA_MODP; }
   static char type_char() { return 'p'; }

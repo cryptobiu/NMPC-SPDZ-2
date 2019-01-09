@@ -1510,11 +1510,11 @@ void Processor::Ext_BOpen_Stop(const vector<int>& reg, int size)
 
 size_t Processor::get_zp_word64_size()
 {
-	size_t bit_size = gfp::get_ZpD().pr.numBits();
-	size_t byte_size = ((bit_size + 7) / 8);
-	size_t word64_size = ((byte_size + 7) / 8);
+	//size_t bit_size = gfp::get_ZpD().pr.numBits();
+	//size_t byte_size = ((bit_size + 7) / 8);
+	//size_t word64_size = ((byte_size + 7) / 8);
 
-	return word64_size;
+	return 1;//word64_size;
 }
 
 void Processor::export_shares(const vector< Share<gfp> > & shares_in, share_t & shares_out)

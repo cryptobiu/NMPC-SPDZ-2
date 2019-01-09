@@ -58,11 +58,11 @@ void MMO::hashOneBlock<gf2n>(octet* output, octet* input)
 
 
 template <>
-void MMO::hashOneBlock<gfp>(octet* output, octet* input)
+void MMO::hashOneBlock<gfp>(octet* /*output*/, octet* /*input*/)
 {
-    encrypt_and_xor<1>(output, input, IV);
+    /*encrypt_and_xor<1>(output, input, IV);
     while (mpn_cmp((mp_limb_t*)output, gfp::get_ZpD().get_prA(), gfp::t()) >= 0)
-        encrypt_and_xor<1>(output, output, IV);
+        encrypt_and_xor<1>(output, output, IV);*/
 }
 
 template <>
@@ -73,8 +73,9 @@ void MMO::hashBlockWise<gf2n,128>(octet* output, octet* input)
 }
 
 template <>
-void MMO::hashBlockWise<gfp,128>(octet* output, octet* input)
+void MMO::hashBlockWise<gfp,128>(octet* /*output*/, octet* /*input*/)
 {
+	/*
     for (int i = 0; i < 16; i++)
     {
         __m128i* in = &((__m128i*)input)[i*8];
@@ -124,4 +125,5 @@ void MMO::hashBlockWise<gfp,128>(octet* output, octet* input)
             }
         }
     }
+    */
 }
