@@ -26,13 +26,7 @@ using namespace std;
 
 class gf2n_short
 {
-//#if defined(EXT_NEC_RING)
-//	SPDZEXT_VALTYPE a;
-//#else
   word a;
-//#endif
-
-//	uint8_t a;
 
   static int n,t1,t2,t3,nterms;
   static int l0,l1,l2,l3;
