@@ -45,7 +45,7 @@ endif
 %.o: %.cpp
 	$(CXX) $(CFLAGS) -MMD -c -o $@ $<
 
-online: Fake-Offline.x Server.x Player-Online.x
+online: Server.x Player-Online.x
 
 #offline: $(OT_EXE) Check-Offline.x
 
@@ -56,9 +56,6 @@ externalIO: client-setup.x bankers-bonus-client.x bankers-bonus-commsec-client.x
 she-offline: Check-Offline.x spdz2-offline.x
 
 overdrive: simple-offline.x pairwise-offline.x cnc-offline.x
-
-Fake-Offline.x: Fake-Offline.cpp $(COMMON) $(PROCESSOR)
-	$(CXX) $(CFLAGS) -o $@ $^ $(LDLIBS)
 
 Server.x: Server.cpp $(COMMON)
 	$(CXX) $(CFLAGS) Server.cpp -o Server.x $(COMMON) $(LDLIBS)
