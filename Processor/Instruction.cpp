@@ -591,7 +591,6 @@ void Instruction::execute(Processor& Proc) const
       case LDSI:
         {
         	Proc.temp.ansp.assign(n);
-		#if defined(EXT_NEC_RING)
         	if (Proc.P.my_num()==0) {
         		Proc.get_Sp_ref(r[0]).assign_zero();
         	}
@@ -603,20 +602,10 @@ void Instruction::execute(Processor& Proc) const
         		Proc.get_Sp_ref(r[0]).assign_zero();
         		Proc.get_Sp_ref(r[0]).set_share(Proc.temp.ansp);
         	}
-		#else
-          if (Proc.P.my_num()==0)
-            Proc.get_Sp_ref(r[0]).set_share(Proc.temp.ansp);
-          else
-            Proc.get_Sp_ref(r[0]).assign_zero();
-          gfp& tmp=Proc.temp.tmpp;
-          tmp.mul(Proc.MCp.get_alphai(),Proc.temp.ansp);
-          Proc.get_Sp_ref(r[0]).set_mac(tmp);
-		#endif
         }
         break;
       case GLDSI:
         { Proc.temp.ans2.assign(n);
-#if defined(EXT_NEC_RING)
 	if (Proc.P.my_num()==0) {
 		Proc.get_S2_ref(r[0]).assign_zero();
 	}
@@ -628,15 +617,6 @@ void Instruction::execute(Processor& Proc) const
 		Proc.get_S2_ref(r[0]).assign_zero();
 		Proc.get_S2_ref(r[0]).set_share(Proc.temp.ans2);
 	}
-#else
-          if (Proc.P.my_num()==0)
-            Proc.get_S2_ref(r[0]).set_share(Proc.temp.ans2);
-          else
-            Proc.get_S2_ref(r[0]).assign_zero();
-          gf2n& tmp=Proc.temp.tmp2;
-          tmp.mul(Proc.MC2.get_alphai(),Proc.temp.ans2);
-          Proc.get_S2_ref(r[0]).set_mac(tmp);
-#endif
         }
         break;
       case LDMC:
@@ -779,75 +759,29 @@ void Instruction::execute(Processor& Proc) const
         #endif
         break;
       case GADDS:
-	#ifdef DEBUG
-           Sans2.add(Proc.read_S2(r[1]),Proc.read_S2(r[2]));
-           Proc.write_S2(r[0],Sans2);
-        #else
-           Proc.get_S2_ref(r[0]).add(Proc.read_S2(r[1]),Proc.read_S2(r[2]));
-        #endif
-        break;
+    	  Proc.get_S2_ref(r[0]).add(Proc.read_S2(r[1]),Proc.read_S2(r[2]));
+    	  break;
       case ADDM:
-        #ifdef DEBUG
-           Sansp.add(Proc.read_Sp(r[1]),Proc.read_Cp(r[2]),Proc.P.my_num()==0,Proc.MCp.get_alphai());
-	   Proc.write_Sp(r[0],Sansp);
-        #elif defined(EXT_NEC_RING)
-	        Proc.get_Sp_ref(r[0]).add(Proc.read_Sp(r[1]),Proc.read_Cp(r[2]),Proc.P.my_num());
-	     #else
-           Proc.get_Sp_ref(r[0]).add(Proc.read_Sp(r[1]),Proc.read_Cp(r[2]),Proc.P.my_num()==0,Proc.MCp.get_alphai());
-        #endif
-        break;
+    	  Proc.get_Sp_ref(r[0]).add(Proc.read_Sp(r[1]),Proc.read_Cp(r[2]),Proc.P.my_num());
+    	  break;
       case GADDM:
-        #ifdef DEBUG
-           Sans2.add(Proc.read_S2(r[1]),Proc.read_C2(r[2]),Proc.P.my_num()==0,Proc.MC2.get_alphai());
-	   Proc.write_S2(r[0],Sans2);
-#elif defined(EXT_NEC_RING)
-	        Proc.get_S2_ref(r[0]).add(Proc.read_S2(r[1]),Proc.read_C2(r[2]),Proc.P.my_num());
-        #else
-           Proc.get_S2_ref(r[0]).add(Proc.read_S2(r[1]),Proc.read_C2(r[2]),Proc.P.my_num()==0,Proc.MC2.get_alphai());
-        #endif
-        break;
+    	  Proc.get_S2_ref(r[0]).add(Proc.read_S2(r[1]),Proc.read_C2(r[2]),Proc.P.my_num());
+    	  break;
       case SUBC:
-	#ifdef DEBUG
-          ansp.sub(Proc.read_Cp(r[1]),Proc.read_Cp(r[2]));
-          Proc.write_Cp(r[0],Proc.temp.ansp);
-	#else
           Proc.get_Cp_ref(r[0]).sub(Proc.read_Cp(r[1]),Proc.read_Cp(r[2]));
-	#endif
-        break;
+          break;
       case GSUBC:
-	#ifdef DEBUG
-          Proc.temp.ans2.sub(Proc.read_C2(r[1]),Proc.read_C2(r[2]));
-          Proc.write_C2(r[0],Proc.temp.ans2);
-	#else
           Proc.get_C2_ref(r[0]).sub(Proc.read_C2(r[1]),Proc.read_C2(r[2]));
-	#endif
-        break;
+          break;
       case SUBS:
-	#ifdef DEBUG
-           Sansp.sub(Proc.read_Sp(r[1]),Proc.read_Sp(r[2]));
-	   Proc.write_Sp(r[0],Sansp);
-        #else
            Proc.get_Sp_ref(r[0]).sub(Proc.read_Sp(r[1]),Proc.read_Sp(r[2]));
-	#endif
-        break;
+           break;
       case GSUBS:
-	#ifdef DEBUG
-           Sans2.sub(Proc.read_S2(r[1]),Proc.read_S2(r[2]));
-	   Proc.write_S2(r[0],Sans2);
-        #else
            Proc.get_S2_ref(r[0]).sub(Proc.read_S2(r[1]),Proc.read_S2(r[2]));
-	#endif
-        break;
+           break;
       case SUBML:
-	#ifdef DEBUG
-           Sansp.sub(Proc.read_Sp(r[1]),Proc.read_Cp(r[2]),Proc.P.my_num()==0,Proc.MCp.get_alphai());
-	   Proc.write_Sp(r[0],Sansp);
-        #elif defined(EXT_NEC_RING)
-	   Proc.get_Sp_ref(r[0]).sub(Proc.read_Sp(r[1]),Proc.read_Cp(r[2]),Proc.P.my_num());
-        #else
-           Proc.get_Sp_ref(r[0]).sub(Proc.read_Sp(r[1]),Proc.read_Cp(r[2]),Proc.P.my_num()==0,Proc.MCp.get_alphai());
-        #endif
-        break;
+    	  Proc.get_Sp_ref(r[0]).sub(Proc.read_Sp(r[1]),Proc.read_Cp(r[2]),Proc.P.my_num());
+    	  break;
       case GSUBML:
 	#ifdef DEBUG
            Sans2.sub(Proc.read_S2(r[1]),Proc.read_C2(r[2]),Proc.P.my_num()==0,Proc.MC2.get_alphai());
@@ -857,14 +791,7 @@ void Instruction::execute(Processor& Proc) const
         #endif
         break;
       case SUBMR:
-        #ifdef DEBUG
-           Sansp.sub(Proc.read_Cp(r[1]),Proc.read_Sp(r[2]),Proc.P.my_num()==0,Proc.MCp.get_alphai());
-	   Proc.write_Sp(r[0],Sansp);
-        #elif defined(EXT_NEC_RING)
 	        Proc.get_Sp_ref(r[0]).sub(Proc.read_Cp(r[1]),Proc.read_Sp(r[2]),Proc.P.my_num());
-        #else
-           Proc.get_Sp_ref(r[0]).sub(Proc.read_Cp(r[1]),Proc.read_Sp(r[2]),Proc.P.my_num()==0,Proc.MCp.get_alphai());
-	#endif
         break;
       case GSUBMR:
         #ifdef DEBUG
@@ -1002,25 +929,11 @@ void Instruction::execute(Processor& Proc) const
         break;
       case ADDSI:
         Proc.temp.ansp.assign(n);
-	#ifdef DEBUG
-           Sansp.add(Proc.read_Sp(r[1]),Proc.temp.ansp,Proc.P.my_num()==0,Proc.MCp.get_alphai());
-	   Proc.write_Sp(r[0],Sansp);
-   #elif defined(EXT_NEC_RING)
-	   Proc.get_Sp_ref(r[0]).add(Proc.read_Sp(r[1]),Proc.temp.ansp,Proc.P.my_num());
-   #else
-           Proc.get_Sp_ref(r[0]).add(Proc.read_Sp(r[1]),Proc.temp.ansp,Proc.P.my_num()==0,Proc.MCp.get_alphai());
-	#endif
+ 	   Proc.get_Sp_ref(r[0]).add(Proc.read_Sp(r[1]),Proc.temp.ansp,Proc.P.my_num());
         break;
       case GADDSI:
         Proc.temp.ans2.assign(n);
-	#ifdef DEBUG
-           Sans2.add(Proc.read_S2(r[1]),Proc.temp.ans2,Proc.P.my_num()==0,Proc.MC2.get_alphai());
-	   Proc.write_S2(r[0],Sans2);
-#elif defined(EXT_NEC_RING)
-	   Proc.get_S2_ref(r[0]).add(Proc.read_S2(r[1]),Proc.temp.ans2,Proc.P.my_num());
-        #else
-           Proc.get_S2_ref(r[0]).add(Proc.read_S2(r[1]),Proc.temp.ans2,Proc.P.my_num()==0,Proc.MC2.get_alphai());
-	#endif
+ 	   Proc.get_S2_ref(r[0]).add(Proc.read_S2(r[1]),Proc.temp.ans2,Proc.P.my_num());
         break;
       case SUBCI:
         Proc.temp.ansp.assign(n);
@@ -1042,14 +955,7 @@ void Instruction::execute(Processor& Proc) const
         break;
       case SUBSI:
         Proc.temp.ansp.assign(n);
-  	#ifdef DEBUG
-           Sansp.sub(Proc.read_Sp(r[1]),Proc.temp.ansp,Proc.P.my_num()==0,Proc.MCp.get_alphai());
-	   Proc.write_Sp(r[0],Sansp);
-   #elif defined(EXT_NEC_RING)
-	   Proc.get_Sp_ref(r[0]).sub(Proc.read_Sp(r[1]),Proc.temp.ansp,Proc.P.my_num());
-        #else
-           Proc.get_Sp_ref(r[0]).sub(Proc.read_Sp(r[1]),Proc.temp.ansp,Proc.P.my_num()==0,Proc.MCp.get_alphai());
-        #endif
+ 	   Proc.get_Sp_ref(r[0]).sub(Proc.read_Sp(r[1]),Proc.temp.ansp,Proc.P.my_num());
         break;
       case GSUBSI:
         Proc.temp.ans2.assign(n);
@@ -1080,14 +986,7 @@ void Instruction::execute(Processor& Proc) const
         break;
       case SUBSFI:
         Proc.temp.ansp.assign(n);
- 	#ifdef DEBUG
-           Sansp.sub(Proc.temp.ansp,Proc.read_Sp(r[1]),Proc.P.my_num()==0,Proc.MCp.get_alphai());
-	   Proc.write_Sp(r[0],Sansp);
-   #elif defined(EXT_NEC_RING)
-	   Proc.get_Sp_ref(r[0]).sub(Proc.temp.ansp,Proc.read_Sp(r[1]),Proc.P.my_num());
-	#else
-           Proc.get_Sp_ref(r[0]).sub(Proc.temp.ansp,Proc.read_Sp(r[1]),Proc.P.my_num()==0,Proc.MCp.get_alphai());
-	#endif
+ 	   Proc.get_Sp_ref(r[0]).sub(Proc.temp.ansp,Proc.read_Sp(r[1]),Proc.P.my_num());
         break;
       case GSUBSFI:
         Proc.temp.ans2.assign(n);
@@ -1440,32 +1339,16 @@ void Instruction::execute(Processor& Proc) const
           }
         return;
       case STARTOPEN:
-#if defined(EXT_NEC_RING)
     	  Proc.Ext_Open_Start(start, size);
-#else
-    	  Proc.POpen_Start(start,Proc.P,Proc.MCp,size);
-#endif
         return;
       case GSTARTOPEN:
-#if defined(EXT_NEC_RING)
     	  Proc.Ext_BOpen_Start(start, size);
-#else
-        Proc.POpen_Start(start,Proc.P,Proc.MC2,size);
-#endif
         return;
       case STOPOPEN:
-#if defined(EXT_NEC_RING)
     	  Proc.Ext_Open_Stop(start, size);
-#else
-        Proc.POpen_Stop(start,Proc.P,Proc.MCp,size);
-#endif
         return;
       case GSTOPOPEN:
-#if defined(EXT_NEC_RING)
     	  Proc.Ext_BOpen_Stop(start, size);
-#else
-        Proc.POpen_Stop(start,Proc.P,Proc.MC2,size);
-#endif
         return;
       case JMP:
         Proc.PC += (signed int) n;
@@ -1533,12 +1416,7 @@ void Instruction::execute(Processor& Proc) const
         Proc.get_C2_ref(r[0]).assign((word)Proc.read_Ci(r[1]));
         break;
       case CONVMODP:
-#if defined(EXT_NEC_RING)
     	  Proc.write_Ci(r[0], (long)(Proc.read_Cp(r[1]).get_ring()));
-#else
-        to_signed_bigint(Proc.temp.aa,Proc.read_Cp(r[1]),n);
-        Proc.write_Ci(r[0], Proc.temp.aa.get_si());
-#endif
         break;
       case GCONVGF2N:
         Proc.write_Ci(r[0], Proc.read_C2(r[1]).get_word());

@@ -335,10 +335,8 @@ class Processor : public ProcessorBase
 
   template <class T>
   void load_shares(const vector<int>& reg, const vector< Share<T> >& shares, int size);
-#if defined(EXT_NEC_RING)
   template <class T>
   void load_bshares(const vector<int>& reg, const vector< Share<T> >& shares, int size);
-#endif
 
   template <class T>
   void load_clears(const vector<int>& reg, vector<T>& PO, vector<T>& C, int size);
@@ -358,25 +356,21 @@ class Processor : public ProcessorBase
   void Ext_Open_Start(const vector<int>& reg, int size);
   void Ext_Open_Stop(const vector<int>& reg, int size);
 
-#if defined(EXT_NEC_RING)
   void Ext_BInput_Share_Int(const vector<int>& reg, int size, const int input_party_id);
   void Ext_BOpen_Start(const vector<int>& reg, int size);
   void Ext_BOpen_Stop(const vector<int>& reg, int size);
   void Ext_BMult_Start(const vector<int>& reg, int size);
   void Ext_BMult_Stop(const vector<int>& reg, int size);
-#endif
 
   size_t mult_allocated;
   share_t mult_factor1, mult_factor2, mult_product;
   void mult_allocate(const size_t required_count);
   void mult_clear();
 
-#if defined(EXT_NEC_RING)
   size_t bmult_allocated;
   share_t bmult_factor1, bmult_factor2, bmult_product;
   void bmult_allocate(const size_t required_count);
   void bmult_clear();
-#endif
 
   size_t open_allocated;
   share_t open_shares;
@@ -384,13 +378,11 @@ class Processor : public ProcessorBase
   void open_allocate(const size_t required_count);
   void open_clear();
 
-#if defined(EXT_NEC_RING)
   size_t bopen_allocated;
   share_t bopen_shares;
   clear_t bopen_clears;
   void bopen_allocate(const size_t required_cound);
   void bopen_clear();
-#endif
 
   // Print the processor state
   friend ostream& operator<<(ostream& s,const Processor& P);
@@ -407,11 +399,10 @@ class Processor : public ProcessorBase
     void export_shares(const vector< Share<gfp> > & shares_in, share_t & shares_out);
     void import_shares(const share_t & shares_in, vector< Share<gfp> > & shares_out);
     void import_clears(const clear_t & clear_in, vector< gfp > & clears_out);
-#if defined(EXT_NEC_RING)
     void export_shares(const vector< Share<gf2n> > & shares_in, share_t & shares_out);
     void import_shares(const share_t & shares_in, vector< Share<gf2n> > & shares_out);
     void import_clears(const clear_t & clear_in, vector< gf2n > & clears_out);
-#endif
+
     int open_input_file();
     int close_input_file();
     int read_input_line(FILE * input_file, std::string & line);

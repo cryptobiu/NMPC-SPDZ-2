@@ -32,11 +32,7 @@ Processor::Processor(int thread_num,Data_Files& DataF,Player& P,
 
   spdz_gfp_ext_context.handle = 0;
   cout << "Processor " << thread_num << " SPDZ GFP extension library initializing." << endl;
-#if defined(EXT_NEC_RING)
   if(0 != (*the_ext_lib_z2n.ext_init)(&spdz_gfp_ext_context, P.my_num(), P.num_players(), "Z2n_Ring",0, 0, 0))
-#else
-  if(0 != (*the_ext_lib_z2n.ext_init)(&spdz_gfp_ext_context, P.my_num(), P.num_players(), "ring32", 100, 100, 100))
-#endif
   {
   	cerr << "SPDZ extension library initialization failed." << endl;
   	dlclose(the_ext_lib_z2n.ext_lib_handle);
@@ -46,11 +42,7 @@ Processor::Processor(int thread_num,Data_Files& DataF,Player& P,
 
   spdz_gf2n_ext_context.handle = 0;
   cout << "Processor" << thread_num << "SPDZ GF2N extension library initializing." << endl;
-#if defined(EXT_NEC_RING)
 	if(0 != (*the_ext_lib_z2.ext_init)(&spdz_gf2n_ext_context, P.my_num(), P.num_players(), "Z2_Bool", 0, 0, 0))
-#else
-	if(0 != (*the_ext_lib_z2.ext_init)(&spdz_gf2n_ext_context, P.my_num(), P.num_players(), "gf2n40", 10, 10, 10))
-#endif
 	{
 		cerr << "SPDZ GF2N extension library initialization failed." << endl;
 		dlclose(the_ext_lib_z2.ext_lib_handle);
@@ -625,7 +617,6 @@ static const size_t share_port_nails = 0;
 
 void Processor::Ext_Skew_Bit_Decomp_R2B(const Share<gfp>& src_reg, const vector<int>& dest_reg, int size)
 {
-#if defined(EXT_NEC_RING)
 	share_t rings_in, bits_out;
 	rings_in.size = bits_out.size = 2* zp_word64_size * 8;
 	rings_in.count = 1;
@@ -668,38 +659,10 @@ void Processor::Ext_Skew_Bit_Decomp_R2B(const Share<gfp>& src_reg, const vector<
 	delete bits_out.data;
 	rings_in.data = NULL;
 	bits_out.data = NULL;
-
-#else
-	int sz=src_reg.size();
-
-	vector< Share<gfp> >& Sh_PO = get_Sh_PO<gfp>();
-	Sh_PO.clear();
-	Sh_PO.reserve(sz*size);
-
-	prep_shares(src_reg, Sh_PO, size);
-
-	share_t rings_in, bits_out;
-	rings_in.size = bits_out.size = zp_word64_size * 8;
-	rings_in.count = bits_out.count = Sh_PO.size();
-	rings_in.data = new u_int8_t[rings_in.size * rings_in.count];
-	bits_out.data = new u_int8_t[bits_out.size * bits_out.count];
-
-	export_shares(Sh_PO, rings_in);
-
-	if(0 != (*the_ext_lib_z2n.ext_skew_bit_decomp)(&spdz_gfp_ext_context, &rings_in, &bits_out))
-	{
-		cerr << "Processor::Ext_Skew_Bit_Decomp extension library ext_skew_bit_decomp() failed." << endl;
-		dlclose(the_ext_lib_z2n.ext_lib_handle);
-		abort();
-	}
-	import_shares(bits_out, Sh_PO);
-	load_shares(dest_reg, Sh_PO, size);
-#endif
 }
 
 void Processor::Ext_Skew_Bit_Decomp_B2B(const Share<gf2n>& src_reg, const vector<int>& dest_reg, int size)
 {
-#if defined(EXT_NEC_RING)
 	share_t bits_in, bits_out;
 	bits_in.size = bits_out.size = 2* zp_word64_size * 8;
 	bits_in.count = 1;
@@ -743,38 +706,10 @@ void Processor::Ext_Skew_Bit_Decomp_B2B(const Share<gf2n>& src_reg, const vector
 	delete bits_out.data;
 	bits_in.data = NULL;
 	bits_out.data = NULL;
-
-#else
-	int sz=src_reg.size();
-
-	vector< Share<gfp> >& Sh_PO = get_Sh_PO<gfp>();
-	Sh_PO.clear();
-	Sh_PO.reserve(sz*size);
-
-	prep_shares(src_reg, Sh_PO, size);
-
-	share_t bits_in, bits_out;
-	bits_in.size = bits_out.size = zp_word64_size * 8;
-	bits_in.count = bits_out.count = Sh_PO.size();
-	bits_in.data = new u_int8_t[bits_in.size * bits_in.count];
-	bits_out.data = new u_int8_t[bits_out.size * bits_out.count];
-
-	export_shares(Sh_PO, bits_in);
-
-	if(0 != (*the_ext_lib_z2n.ext_skew_bit_decomp)(&spdz_gfp_ext_context, &bits_in, &bits_out))
-	{
-		cerr << "Processor::Ext_Skew_Bit_Decomp extension library ext_skew_bit_decomp() failed." << endl;
-		dlclose(the_ext_lib_z2n.ext_lib_handle);
-		abort();
-	}
-	import_shares(bits_out, Sh_PO);
-	load_shares(dest_reg, Sh_PO, size);
-#endif
 }
 
 void Processor::Ext_Skew_Bit_Decomp_B2R(const Share<gf2n>& src_reg, const vector<int>& dest_reg, int size)
 {
-#if defined(EXT_NEC_RING)
 	share_t bits_in, rings_out;
 	bits_in.size = rings_out.size = 2* zp_word64_size * 8;
 	bits_in.count = 1;
@@ -808,38 +743,10 @@ void Processor::Ext_Skew_Bit_Decomp_B2R(const Share<gf2n>& src_reg, const vector
 	delete rings_out.data;
 	bits_in.data = NULL;
 	rings_out.data = NULL;
-
-#else
-	int sz=src_reg.size();
-
-	vector< Share<gfp> >& Sh_PO = get_Sh_PO<gfp>();
-	Sh_PO.clear();
-	Sh_PO.reserve(sz*size);
-
-	prep_shares(src_reg, Sh_PO, size);
-
-	share_t bits_in, rings_out;
-	bits_in.size = rings_out.size = zp_word64_size * 8;
-	bits_in.count = rings_out.count = Sh_PO.size();
-	bits_in.data = new u_int8_t[bits_in.size * bits_in.count];
-	rings_out.data = new u_int8_t[rings_out.size * rings_out.count];
-
-	export_shares(Sh_PO, bits_in);
-
-	if(0 != (*the_ext_lib_z2n.ext_skew_bit_decomp)(&spdz_gfp_ext_context, &bits_in, &rings_out))
-	{
-		cerr << "Processor::Ext_Skew_Bit_Decomp extension library ext_skew_bit_decomp() failed." << endl;
-		dlclose(the_ext_lib_z2n.ext_lib_handle);
-		abort();
-	}
-	import_shares(rings_out, Sh_PO);
-	load_shares(dest_reg, Sh_PO, size);
-#endif
 }
 
 void Processor::Ext_Skew_Ring_Comp(const int& dest, const vector<int>& reg, int size)
 {
-#if defined(EXT_NEC_RING)
 	int sz=reg.size();
 
 	vector< Share<gf2n> >& Sh_PO = get_Sh_PO<gf2n>();
@@ -884,33 +791,6 @@ void Processor::Ext_Skew_Ring_Comp(const int& dest, const vector<int>& reg, int 
 //	cout << "[Processor::Ext_Skew_Ring_Comp] share 1 = " << tmp1 << endl;
 //	cout << "[Processor::Ext_Skew_Ring_Comp] share 2 = " << tmp2 << endl;
 //	cout << endl;
-
-#else
-	int sz=reg.size();
-
-	vector< Share<gfp> >& Sh_PO = get_Sh_PO<gfp>();
-	Sh_PO.clear();
-	Sh_PO.reserve(sz*size);
-
-	prep_shares(reg, Sh_PO, size);
-
-	share_t bits_in, rings_out;
-	bits_in.size = rings_out.size = zp_word64_size * 8;
-	bits_in.count = rings_out.count = Sh_PO.size();
-	bits_in.data = new u_int8_t[bits_in.size * bits_in.count];
-	rings_out.data = new u_int8_t[rings_out.size * rings_out.count];
-
-	export_shares(Sh_PO, bits_in);
-
-	if(0 != (*the_ext_lib_z2n.ext_skew_ring_comp)(&spdz_gfp_ext_context, &bits_in, &rings_out))
-	{
-		cerr << "Processor::Ext_Skew_Ring_Comp extension library ext_skew_ring_comp() failed." << endl;
-		dlclose(the_ext_lib_z2n.ext_lib_handle);
-		abort();
-	}
-	import_shares(rings_out, Sh_PO);
-	load_shares(reg, Sh_PO, size);
-#endif
 }
 
 void Processor::Ext_Input_Share_Int(const vector<int>& reg, int size, const int input_party_id)
@@ -926,15 +806,9 @@ void Processor::Ext_Input_Share_Int(const vector<int>& reg, int size, const int 
 
 	share_t sec_int_input;
 	sec_int_input.count = required_input_count;
-#if defined(EXT_NEC_RING)
 	sec_int_input.size = 2* zp_word64_size * 8;
 	sec_int_input.data = new u_int8_t[2 * required_input_size];
 	memset(sec_int_input.data, 0, 2*required_input_size);
-#else
-	sec_int_input.size = zp_word64_size * 8;
-	sec_int_input.data = new u_int8_t[required_input_size];
-	memset(sec_int_input.data, 0, required_input_size);
-#endif
 
 	if(P.my_num() == input_party_id)
 	{
@@ -973,11 +847,7 @@ void Processor::Ext_Input_Share_Int(const vector<int>& reg, int size, const int 
 	int sz=reg.size();
 	vector< Share<gfp> >& Sh_PO = get_Sh_PO<gfp>();
 	Sh_PO.clear();
-#if defined(EXT_NEC_RING)
 	Sh_PO.resize(sz*size);
-#else
-	Sh_PO.reserve(sz*size);
-#endif
 	import_shares(sec_int_input, Sh_PO);
 	load_shares(reg, Sh_PO, size);
 
@@ -997,15 +867,9 @@ void Processor::Ext_BInput_Share_Int(const vector<int>& reg, int size, const int
 
 	share_t sec_bit_input;
 	sec_bit_input.count = required_input_count;
-#if defined(EXT_NEC_RING)
 	sec_bit_input.size = 2* zp_word64_size * 8;
 	sec_bit_input.data = new u_int8_t[2 * required_input_size];
 	memset(sec_bit_input.data, 0, 2*required_input_size);
-#else
-	sec_int_input.size = zp_word64_size * 8;
-	sec_int_input.data = new u_int8_t[required_input_size];
-	memset(sec_int_input.data, 0, required_input_size);
-#endif
 
 	if(P.my_num() == input_party_id)
 	{
@@ -1044,11 +908,7 @@ void Processor::Ext_BInput_Share_Int(const vector<int>& reg, int size, const int
 	int sz=reg.size();
 	vector< Share<gf2n> >& Sh_PO = get_Sh_PO<gf2n>();
 	Sh_PO.clear();
-#if defined(EXT_NEC_RING)
 	Sh_PO.resize(sz*size);
-#else
-	Sh_PO.reserve(sz*size);
-#endif
 	import_shares(sec_bit_input, Sh_PO);
 	load_bshares(reg, Sh_PO, size);
 
@@ -1281,7 +1141,6 @@ void Processor::Ext_Mult_Start(const vector<int>& reg, int size)
 	}
 }
 
-#if defined(EXT_NEC_RING)
 void Processor::Ext_BMult_Start(const vector<int>& reg, int size)
 {
 	int sz=reg.size();
@@ -1355,7 +1214,6 @@ void Processor::Ext_BMult_Start(const vector<int>& reg, int size)
 //		cout << "Processor::Ext_BMult_Start extension library start_mult launched." << endl;
 	}
 }
-#endif
 
 void Processor::Ext_Mult_Stop(const vector<int>& reg, int size)
 {
@@ -1366,7 +1224,6 @@ void Processor::Ext_Mult_Stop(const vector<int>& reg, int size)
 		abort();
 	}
 
-#if defined(EXT_NEC_RING)
 	vector< Share<gfp> >& Sh_PO = get_Sh_PO<gfp>();
 	int sz=reg.size();
 	Sh_PO.clear();
@@ -1375,13 +1232,11 @@ void Processor::Ext_Mult_Stop(const vector<int>& reg, int size)
 	prep_shares(reg, Sh_PO, size);
 	import_shares(mult_product, Sh_PO);
 	load_shares(reg, Sh_PO, size);
-#endif
 	sent += reg.size() * size;
 	rounds++;
 //	cout << "Processor::Ext_Mult_Stop extension library stop_mult launched." << endl;
 }
 
-#if defined(EXT_NEC_RING)
 void Processor::Ext_BMult_Stop(const vector<int>& reg, int size)
 {
 	if(0 != (*the_ext_lib_z2.ext_stop_mult)(&spdz_gf2n_ext_context))
@@ -1411,7 +1266,6 @@ void Processor::Ext_BMult_Stop(const vector<int>& reg, int size)
 	rounds++;
 //	cout << "Processor::Ext_BMult_Stop extension library stop_mult launched." << endl;
 }
-#endif
 
 void Processor::Ext_Open_Start(const vector<int>& reg, int size)
 {
@@ -1521,7 +1375,6 @@ void Processor::export_shares(const vector< Share<gfp> > & shares_in, share_t & 
 {
 	assert(shares_in.size() == shares_out.count);
 
-#if defined(EXT_NEC_RING)
 	SPDZEXT_VALTYPE *p = (SPDZEXT_VALTYPE *)shares_out.data;
 
 	for (size_t i=0; i<shares_out.count; ++i) {
@@ -1532,18 +1385,8 @@ void Processor::export_shares(const vector< Share<gfp> > & shares_in, share_t & 
 //		memcpy(shares_out.data + (i*shares_out.size), &x1, sizeof(SPDZEXT_VALTYPE) );
 //		memcpy(shares_out.data + (i*shares_out.size) + sizeof(SPDZEXT_VALTYPE), &x2, sizeof(SPDZEXT_VALTYPE) );
 	}
-#else
-	bigint b;
-	for(size_t i = 0; i < shares_out.count; ++i)
-	{
-		to_bigint(b, shares_in[i].get_share());
-		memset(shares_out.data + (i * shares_out.size), 0, shares_out.size);
-		mpz_export(shares_out.data + (i * shares_out.size), NULL, share_port_order, share_port_size, share_port_endian, share_port_nails, b.get_mpz_t());
-	}
-#endif
 }
 
-#if defined(EXT_NEC_RING)
 void Processor::export_shares(const vector< Share<gf2n> > & shares_in, share_t & shares_out)
 {
 	assert(shares_in.size() == shares_out.count);
@@ -1556,13 +1399,11 @@ void Processor::export_shares(const vector< Share<gf2n> > & shares_in, share_t &
 		p[2*i+1] = x2;
 	}
 }
-#endif
 
 void Processor::import_shares(const share_t & shares_in, vector< Share<gfp> > & shares_out)
 {
 	assert(shares_in.count == shares_out.size());
 
-#if defined(EXT_NEC_RING)
 	SPDZEXT_VALTYPE *p = (SPDZEXT_VALTYPE *)shares_in.data;
 
 	for (size_t i=0; i<shares_in.count; ++i) {
@@ -1574,21 +1415,8 @@ void Processor::import_shares(const share_t & shares_in, vector< Share<gfp> > & 
 		shares_out[i].set_share(g1);
 		shares_out[i].set_mac(g2);
 	}
-#else
-	bigint b;
-	gfp mac, value;
-	for(size_t i = 0; i < shares_in.count; ++i)
-	{
-		mpz_import(b.get_mpz_t(), zp_word64_size, share_port_order, share_port_size, share_port_endian, share_port_nails, shares_in.data + (i * shares_in.size));
-		to_gfp(value, b);
-		mac.mul(MCp.get_alphai(), value);
-		shares_out[i].set_share(value);
-		shares_out[i].set_mac(mac);
-	}
-#endif
 }
 
-#if defined(EXT_NEC_RING)
 void Processor::import_shares(const share_t & shares_in, vector< Share<gf2n> > & shares_out)
 {
 	assert(shares_in.count == shares_out.size());
@@ -1605,12 +1433,10 @@ void Processor::import_shares(const share_t & shares_in, vector< Share<gf2n> > &
 		shares_out[i].set_mac(g2);
 	}
 }
-#endif
 
 void Processor::import_clears(const clear_t & clear_in, vector< gfp > & clears_out)
 {
 	assert(clear_in.count == clears_out.size());
-#if defined(EXT_NEC_RING)
 
 	for (size_t i=0; i<clear_in.count; i++) {
 		SPDZEXT_VALTYPE tmp = 0;
@@ -1624,17 +1450,8 @@ void Processor::import_clears(const clear_t & clear_in, vector< gfp > & clears_o
 //		clears_out[i].assign_ring((SPDZEXT_VALTYPE)(*(clear_in.data + i*clear_in.size)));
 //	}
 
-#else
-	bigint b;
-	for(size_t i = 0; i < clear_in.count; ++i)
-	{
-		mpz_import(b.get_mpz_t(), zp_word64_size, share_port_order, share_port_size, share_port_endian, share_port_nails, clear_in.data + (i * clear_in.size));
-		to_gfp(clears_out[i], b);
-	}
-#endif
 }
 
-#if defined(EXT_NEC_RING)
 void Processor::import_clears(const clear_t & clear_in, vector< gf2n > & clears_out)
 {
 	assert(clear_in.count == clears_out.size());
@@ -1651,7 +1468,6 @@ void Processor::import_clears(const clear_t & clear_in, vector< gf2n > & clears_
 //		clears_out[i].assign((SPDZEXT_VALTYPE)(*(clear_in.data + i*clear_in.size)));
 //	}
 }
-#endif
 
 int Processor::open_input_file()
 {
@@ -1735,11 +1551,7 @@ void Processor::mult_allocate(const size_t required_count)
 	{
 		mult_clear();
 		mult_allocated = mult_factor1.count = mult_factor2.count = mult_product.count = required_count;
-#if defined(EXT_NEC_RING)
 		mult_factor1.size = mult_factor2.size = mult_product.size = 2 * zp_word64_size * 8; // 2 * ... replicated
-#else
-		mult_factor1.size = mult_factor2.size = mult_product.size = zp_word64_size * 8;
-#endif
 		mult_factor1.data = new u_int8_t[mult_factor1.size * mult_factor1.count];
 		mult_factor2.data = new u_int8_t[mult_factor2.size * mult_factor2.count];
 		mult_product.data = new u_int8_t[mult_product.size * mult_product.count];
@@ -1762,7 +1574,6 @@ void Processor::mult_clear()
 	}
 }
 
-#if defined(EXT_NEC_RING)
 void Processor::bmult_allocate(const size_t required_count)
 {
 	if(required_count > bmult_allocated)
@@ -1792,7 +1603,6 @@ void Processor::bmult_clear()
 		bmult_factor1.count = bmult_factor2.count = bmult_product.count = bmult_allocated = 0;
 	}
 }
-#endif
 
 /*
 size_t open_allocated;
@@ -1800,7 +1610,6 @@ share_t open_shares;
 clear_t open_clears;*/
 void Processor::open_allocate(const size_t required_count)
 {
-#if defined(EXT_NEC_RING)
 	if(required_count > open_allocated)
 	{
 		open_clear();
@@ -1810,16 +1619,6 @@ void Processor::open_allocate(const size_t required_count)
 		open_shares.data = new u_int8_t[open_shares.size * open_shares.count];
 		open_clears.data = new u_int8_t[open_clears.size * open_clears.count];
 	}
-#else
-	if(required_count > open_allocated)
-	{
-		open_clear();
-		open_shares.count = open_clears.count = open_allocated = required_count;
-		open_shares.size = open_clears.size = zp_word64_size * 8;
-		open_shares.data = new u_int8_t[open_shares.size * open_shares.count];
-		open_clears.data = new u_int8_t[open_clears.size * open_clears.count];
-	}
-#endif
 	else
 	{
 		open_shares.count = open_clears.count = required_count;
@@ -1839,7 +1638,6 @@ void Processor::open_clear()
 
 
 
-#if defined(EXT_NEC_RING)
 /*
 size_t bopen_allocated;
 share_t bopen_shares;
@@ -1871,7 +1669,6 @@ void Processor::bopen_clear()
 		bopen_shares.count = bopen_clears.count = bopen_allocated = 0;
 	}
 }
-#endif
 
 //*****************************************************************************************//
 

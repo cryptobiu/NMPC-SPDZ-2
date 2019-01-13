@@ -11,7 +11,6 @@
 template<class T>
 Share<T>::Share(const T& aa, int my_num, const T& alphai)
 {
-#if defined(EXT_NEC_RING)
 	if (alphai == alphai) { } //ignore alphai
 	T x1, x2, x3;
 	x1 = aa; x2 = 0; x3 = 0;
@@ -27,13 +26,6 @@ Share<T>::Share(const T& aa, int my_num, const T& alphai)
 		a = x1 + x2;
 		mac = x2;
 	}
-#else
-    if (my_num == 0)
-        a = aa;
-    else
-        a.assign_zero();
-    mac = aa * alphai;
-#endif
 }
 
 
@@ -64,7 +56,6 @@ void Share<T>::add(const Share<T>& S,const T& aa,bool playerone,const T& alphai)
   mac.add(S.mac,tmp);
 }
 
-#if defined(EXT_NEC_RING)
 template<class T>
 void Share<T>::add(const Share<T>& S,const T& aa, int player)
 {
@@ -81,7 +72,6 @@ void Share<T>::add(const Share<T>& S,const T& aa, int player)
 		mac = S.mac;
 	}
 }
-#endif
 
 template<class T>
 void Share<T>::sub(const Share<T>& S,const T& aa,bool playerone,const T& alphai)
@@ -96,7 +86,6 @@ void Share<T>::sub(const Share<T>& S,const T& aa,bool playerone,const T& alphai)
   mac.sub(S.mac,tmp);
 }
 
-#if defined(EXT_NEC_RING)
 template<class T>
 void Share<T>::sub(const Share<T>& S,const T& aa,int player)
 {
@@ -113,7 +102,6 @@ void Share<T>::sub(const Share<T>& S,const T& aa,int player)
 		mac = S.mac;
 	}
 }
-#endif
 
 template<class T>
 void Share<T>::sub(const T& aa,const Share<T>& S,bool playerone,const T& alphai)
@@ -130,7 +118,6 @@ void Share<T>::sub(const T& aa,const Share<T>& S,bool playerone,const T& alphai)
   mac.sub(tmp,S.mac);
 }
 
-#if defined(EXT_NEC_RING)
 template<class T>
 void Share<T>::sub(const T& aa,const Share<T>& S,int player)
 {
@@ -147,7 +134,6 @@ void Share<T>::sub(const T& aa,const Share<T>& S,int player)
 		mac.sub(0, S.mac);
 	}
 }
-#endif
 
 template<class T>
 void Share<T>::sub(const Share<T>& S1,const Share<T>& S2)
