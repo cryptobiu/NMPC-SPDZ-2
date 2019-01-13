@@ -81,25 +81,13 @@ class gf2n_short
   void assign_one()              { a=1; } 
   void assign_x()                { a=2; }
   void assign(word aa)           {
-#if defined(EXT_NEC_RING)
 	  a=aa;
-#else
-	  a=aa&mask;
-#endif
   }
   void assign(long aa)           {
-#if defined(EXT_NEC_RING)
 	  a=aa;
-#else
-	  assign(word(aa));
-#endif
   }
   void assign(int aa)            {
-#if defined(EXT_NEC_RING)
 	  a=static_cast<unsigned int>(aa);
-#else
-	  a=static_cast<unsigned int>(aa)&mask;
-#endif
   }
   void assign(const char* buffer) { a = *(word*)buffer; }
 
