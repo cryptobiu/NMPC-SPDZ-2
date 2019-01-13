@@ -33,9 +33,5 @@ void generate_prime(bigint& p, int lgp, int m);
 // get main directory for prep. data
 string get_prep_dir(int nparties, int lg2p, int gf2ndegree);
 
-// Read online setup file for gfp and gf2n
-void read_setup(const string& dir_prefix);
-void read_setup(int nparties, int lg2p, int gf2ndegree);
-
 
 #endif /* MATH_SETUP_H_ */

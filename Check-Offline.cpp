@@ -252,8 +252,6 @@ int main(int argc, const char** argv)
   else
     PREP_DATA_PREFIX = get_prep_dir(nparties, lgp, lg2);
 
-  read_setup(PREP_DATA_PREFIX);
-
   if (!use_montgomery)
   {
     // no montgomery

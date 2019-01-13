@@ -63,7 +63,6 @@ int main(int argc, const char** argv) {
     opt.get("-N")->getInt(nparties);
     opt.get("-lgp")->getInt(lgp);
     opt.get("-lg2")->getInt(lg2);
-    read_setup(nparties, lgp, lg2);
 
 	std::string input_name, output_name;
 	bool use_stdin = false;
