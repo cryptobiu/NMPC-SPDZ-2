@@ -14,6 +14,7 @@
 #include <xmmintrin.h>
 #include <emmintrin.h>
 
+#include "Tools/avx_memcpy.h"
 
 bool is_ge(__m128i a, __m128i b)
 {
@@ -36,6 +37,26 @@ ostream& operator<<(ostream& s, const int128& a)
   s.width(16);
   s << tmp[0] << dec;
   return s;
+}
+
+istream& operator>>(istream& s,int128& a)
+{
+	a = 0;
+	char c;
+	for(size_t i = 0; i < 2 * sizeof(__int128_t); ++i) {
+		a.a *= 16;
+		s >> c;
+		if(!isxdigit(c)) {
+			break;
+		}
+		c = tolower(c);
+		if('0' <= c && c <= '9') {
+			a.a += (c - '0');
+		} else {
+			a.a += (c - 'a' + 10);
+		}
+	}
+	return s;
 }
 
 
