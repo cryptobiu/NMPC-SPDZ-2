@@ -53,7 +53,7 @@ gen_input: gen_input_f2n.x gen_input_fp.x
 
 externalIO: client-setup.x bankers-bonus-client.x bankers-bonus-commsec-client.x
 
-she-offline: Check-Offline.x spdz2-offline.x
+she-offline: Check-Offline.x
 
 overdrive: simple-offline.x pairwise-offline.x cnc-offline.x
 
@@ -103,9 +103,6 @@ pairwise-offline.x: $(COMMON) $(FHEOFFLINE) pairwise-offline.cpp
 	$(CXX) $(CFLAGS) -o $@ $^ $(LDLIBS)
 
 cnc-offline.x: $(COMMON) $(FHEOFFLINE) cnc-offline.cpp
-	$(CXX) $(CFLAGS) -o $@ $^ $(LDLIBS)
-
-spdz2-offline.x: $(COMMON) $(FHEOFFLINE) spdz2-offline.cpp
 	$(CXX) $(CFLAGS) -o $@ $^ $(LDLIBS)
 endif
 
