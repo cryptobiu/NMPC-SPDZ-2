@@ -13,10 +13,6 @@ AUTH = $(patsubst %.cpp,%.o,$(wildcard Auth/*.cpp))
 
 PROCESSOR = $(patsubst %.cpp,%.o,$(wildcard Processor/*.cpp))
 
-ifeq ($(USE_NTL),1)
-FHEOFFLINE = $(patsubst %.cpp,%.o,$(wildcard FHEOffline/*.cpp FHE/*.cpp))
-endif
-
 # OT stuff needs GF2N_LONG, so only compile if this is enabled
 #ifeq ($(USE_GF2N_LONG),1)
 #OT = $(patsubst %.cpp,%.o,$(filter-out OT/OText_main.cpp,$(wildcard OT/*.cpp)))
@@ -24,7 +20,7 @@ endif
 #endif
 
 COMMON = $(MATH) $(TOOLS) $(NETWORK) $(AUTH)
-COMPLETE = $(COMMON) $(PROCESSOR) $(FHEOFFLINE) $(TINYOTOFFLINE) $(OT)
+COMPLETE = $(COMMON) $(PROCESSOR) $(TINYOTOFFLINE) $(OT)
 
 LIB = libSPDZ.a
 LIBSIMPLEOT = SimpleOT/libsimpleot.a
@@ -96,13 +92,13 @@ bankers-bonus-commsec-client.x: ExternalIO/bankers-bonus-commsec-client.cpp $(CO
 	$(CXX) $(CFLAGS) -o $@ $^ $(LDLIBS)
 
 ifeq ($(USE_NTL),1)
-simple-offline.x: $(COMMON) $(FHEOFFLINE) simple-offline.cpp
+simple-offline.x: $(COMMON) simple-offline.cpp
 	$(CXX) $(CFLAGS) -o $@ $^ $(LDLIBS)
 
-pairwise-offline.x: $(COMMON) $(FHEOFFLINE) pairwise-offline.cpp
+pairwise-offline.x: $(COMMON) pairwise-offline.cpp
 	$(CXX) $(CFLAGS) -o $@ $^ $(LDLIBS)
 
-cnc-offline.x: $(COMMON) $(FHEOFFLINE) cnc-offline.cpp
+cnc-offline.x: $(COMMON) cnc-offline.cpp
 	$(CXX) $(CFLAGS) -o $@ $^ $(LDLIBS)
 endif
 
