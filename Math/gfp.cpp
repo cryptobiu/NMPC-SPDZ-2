@@ -5,8 +5,6 @@
 
 #include "Exceptions/Exceptions.h"
 
-//Zp_Data gfp::ZpD;
-
 void gfp::almost_randomize(PRNG& /*G*/)
 {
   //G.get_octets((octet*)a.x,t()*sizeof(mp_limb_t));
