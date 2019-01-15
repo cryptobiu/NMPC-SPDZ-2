@@ -2,7 +2,6 @@
 
 
 #include "Tools/random.h"
-#include "Math/bigint.h"
 #include <stdio.h>
 #include <sodium.h>
 
@@ -181,56 +180,6 @@ void PRNG::get_octets(octet* ans,int len)
       if (cnt==RAND_SIZE)
         next();
     }
-}
-
-
-bigint PRNG::randomBnd(const bigint& B, bool positive)
-{
-  bigint x;
-#ifdef REALLOC_POLICE
-  x = B;
-#endif
-  randomBnd(x, B, positive);
-  return x;
-}
-
-void PRNG::randomBnd(bigint& x, const bigint& B, bool positive)
-{
-  int i = 0;
-  do
-    {
-      get_bigint(x, numBits(B), true);
-      if (i++ > 1000)
-        {
-          cout << x << " - " << B << " = " << x - B << endl;
-          throw runtime_error("bounded randomness error");
-        }
-    }
-  while (x >= B);
-  if (!positive)
-    {
-      if (get_bit())
-        mpz_neg(x.get_mpz_t(), x.get_mpz_t());
-    }
-}
-
-void PRNG::get_bigint(bigint& res, int n_bits, bool positive)
-{
-  int n_bytes = (n_bits + 7) / 8;
-  if (n_bytes > 1000)
-    throw not_implemented();
-  octet bytes[1000];
-  get_octets(bytes, n_bytes);
-  octet mask = (1 << (n_bits % 8)) - 1;
-  bytes[0] &= mask;
-  bigintFromBytes(res, bytes, n_bytes);
-  if (not positive and (get_bit()))
-    mpz_neg(res.get_mpz_t(), res.get_mpz_t());
-}
-
-void PRNG::get(bigint& res, int n_bits, bool positive)
-{
-  get_bigint(res, n_bits, positive);
 }
 
 void PRNG::get(int& res, int n_bits, bool positive)

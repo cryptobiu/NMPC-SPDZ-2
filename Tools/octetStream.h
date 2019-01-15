@@ -31,8 +31,6 @@
  
 using namespace std;
 
-class bigint;
-
 class octetStream
 {
   size_t len,mxlen,ptr;  // len is the "write head", ptr is the "read head"
@@ -68,8 +66,6 @@ class octetStream
   octetStream hash()   const;
   // output must have length at least HASH_SIZE
   void hash(octetStream& output)   const;
-  // The following produces a check sum for debugging purposes
-  bigint check_sum(int req_bytes=crypto_hash_BYTES)       const;
 
   void concat(const octetStream& os);
 

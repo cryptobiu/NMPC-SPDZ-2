@@ -10,8 +10,7 @@
 #include "Tools/sha1.h"
 #include "Exceptions/Exceptions.h"
 #include "Networking/data.h"
-#include "Math/bigint.h"
-
+#include "Tools/int.h"
 
 void octetStream::clear()
 {
@@ -75,18 +74,6 @@ octetStream octetStream::hash() const
   octetStream h(crypto_generichash_BYTES_MIN);
   hash(h);
   return h;
-}
-
-
-bigint octetStream::check_sum(int req_bytes) const
-{
-  unsigned char hash[req_bytes];
-  crypto_generichash(hash, req_bytes, data, len, NULL, 0);
-
-  bigint ans;
-  bigintFromBytes(ans,hash,req_bytes);
-  // cout << ans << "\n";
-  return ans;
 }
 
 
