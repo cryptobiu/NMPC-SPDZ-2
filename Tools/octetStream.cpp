@@ -159,40 +159,6 @@ void octetStream::get(int& l)
 }
 
 
-void octetStream::store(const bigint& x)
-{
-  size_t num=numBytes(x);
-  resize(len+num+5);
-
-  (data+len)[0]=0;
-  if (x<0) { (data+len)[0]=1; }
-  len++;
-
-  encode_length(data+len,num,4); len+=4;
-  bytesFromBigint(data+len,x,num);
-  len+=num;
-}
-
-
-void octetStream::get(bigint& ans)
-{
-  int sign=(data+ptr)[0];
-  if (sign!=0 && sign!=1) { throw bad_value(); }
-  ptr++;
-
-  long length=decode_length(data+ptr,4); ptr+=4;
-
-  if (length!=0)
-    { bigintFromBytes(ans, data+ptr, length);
-      ptr+=length;
-      if (sign)
-        mpz_neg(ans.get_mpz_t(), ans.get_mpz_t());
-    }
-  else
-    ans=0;
-}
-
-
 void octetStream::store(const vector<int>& v)
 {
   store(v.size());

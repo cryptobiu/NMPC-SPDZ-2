@@ -109,9 +109,6 @@ class octetStream
   void store_int(size_t a, int n_bytes);
   size_t get_int(int n_bytes);
 
-  void store(const bigint& x);
-  void get(bigint& ans);
-
   // works for all statically allocated types
   template <class T>
   void serialize(const T& x) { append((octet*)&x, sizeof(x)); }
