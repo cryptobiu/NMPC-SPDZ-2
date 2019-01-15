@@ -7,7 +7,7 @@
 using namespace std;
 
 #include "Math/gf2n.h"
-#include "Math/Zp_Data.h"
+#include "Math/bigint.h"
 #include "Math/field_types.h"
 #include "Tools/random.h"
 
@@ -65,9 +65,6 @@ class gfp
 
   SPDZEXT_VALTYPE get_ring() const { return a_ring; }
 
-  // Assumes prD behind x is equal to ZpD
-  void assign(modp&) { }
-  
   gfp()              { }
   gfp(const gfp& g) : a_ring(g.a_ring)  { }
   gfp(const __m128i& x) { *this=x; }
