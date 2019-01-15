@@ -26,7 +26,6 @@ void write_online_setup(ofstream& outf, string dirname, const bigint& p, int lg2
 
 // Setup primes only
 // Chooses a p of at least lgp bits
-void SPDZ_Data_Setup_Primes(bigint& p,int lgp,int& idx,int& m);
 void generate_prime(bigint& p, int lgp, int m);
 
 // get main directory for prep. data

@@ -9,51 +9,6 @@
 
 #include <fstream>
 
-
-/*
- * Just setup the primes, doesn't need NTL.
- * Sets idx and m to be used by SHE setup if necessary
- */
-void SPDZ_Data_Setup_Primes(bigint& p,int lgp,int& idx,int& m)
-{
-  cout << "Setting up parameters" << endl;
-
-  switch (lgp)
-    { case -1:
-        m=16;
-        idx=1;    // Any old figures will do, but need to be for lgp at last
-        lgp=32;   // Switch to bigger prime to get parameters
-        break;
-      case 32:
-        m=8192;
-        idx=0;
-        break;
-      case 64:
-        m=16384;
-        idx=1;
-        break;
-      case 128:
-        m=32768; 
-        idx=2;
-        break;
-      case 256: 
-        m=32768;
-        idx=3;
-        break;
-      case 512:
-        m=65536;
-        idx=4;
-        break;
-      default:
-        m=1;
-        idx=0;
-        cout << "no precomputed parameters, trying anyway" << endl;
-        break;
-    }
-  cout << "m = " << m << endl;
-  generate_prime(p, lgp, m);
-}
-
 void generate_prime(bigint& p, int lgp, int m)
 {
   // Here we choose a prime which is the order of a BN curve
