@@ -87,14 +87,6 @@ void generate_prime(bigint& p, int lgp, int m)
   cout << lgp << " <= " << numBits(p) << endl;
 }
 
-
-void generate_online_setup(ofstream& outf, string dirname, bigint& p, int lgp, int lg2)
-{
-  int idx, m;
-  SPDZ_Data_Setup_Primes(p, lgp, idx, m);
-  write_online_setup(outf, dirname, p, lg2);
-}
-
 void write_online_setup(ofstream& outf, string dirname, const bigint& p, int lg2)
 {
   if (p == 0)
