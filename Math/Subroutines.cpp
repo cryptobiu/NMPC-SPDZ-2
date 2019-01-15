@@ -70,25 +70,6 @@ modp Find_Primitive_Root_m(int m,const vector<int>& poly,const Zp_Data& ZpD)
 
 
 
-/* Find a (2m)'th primitive root moduli the current prime
- *   This is deterministic so all players have the same root of unity
- *   poly is Phi_m(X)
- */
-modp Find_Primitive_Root_2m(int m,const vector<int>& poly,const Zp_Data& ZpD)
-{
-  // Thin out poly, where poly is Phi_m(X) by 2
-  vector<int> poly2;
-  poly2.resize(2*poly.size());
-  for (unsigned int i=0; i<poly.size(); i++)
-    { poly2[2*i]=poly[i];
-      poly2[2*i+1]=0;
-    }
-  modp ans=Find_Primitive_Root_m(2*m,poly2,ZpD);
-  return ans;
-}
-
-
-
 /* Find an mth primitive root moduli the current prime
  *   This is deterministic so all players have the same root of unity
  * This assumes m is a power of two and so the cyclotomic polynomial
