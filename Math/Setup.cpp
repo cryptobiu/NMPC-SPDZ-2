@@ -9,39 +9,6 @@
 
 #include <fstream>
 
-void generate_prime(bigint& p, int lgp, int m)
-{
-  // Here we choose a prime which is the order of a BN curve
-  //    - Reason is that there are some applications where this
-  //      would be a good idea. So I have hard coded it in here
-  //    - This is pointless/impossible for lgp=32, 64 so for 
-  //      these do something naive
-  //    - Have not tested 256 and 512
-  bigint u;
-  int ex;
-  if (lgp!=32 && lgp!=64)
-    { u=1; u=u<<(lgp-1); u=sqrt(sqrt(u/36))/m;
-      u=u*m;
-      bigint q;
-      //   cout << ex << " " << u << " " << numBits(u) << endl;
-      p=(((36*u+36)*u+18)*u+6)*u+1;   // The group order of a BN curve
-      q=(((36*u+36)*u+24)*u+6)*u+1;   // The base field size of a BN curve
-      while (!probPrime(p) || !probPrime(q) || numBits(p)<lgp) 
-        { u=u+m;
-          p=(((36*u+36)*u+18)*u+6)*u+1;
-          q=(((36*u+36)*u+24)*u+6)*u+1;
-        }
-    }
-  else
-    { ex=lgp-numBits(m);
-      u=1; u=(u<<ex)*m;  p=u+1;
-      while (!probPrime(p) || numBits(p)<lgp)
-        { u=u+m;  p=u+1; }
-    }
-  cout << "\t p = " << p << "  u = " << u << "  :   ";
-  cout << lgp << " <= " << numBits(p) << endl;
-}
-
 void write_online_setup(ofstream& outf, string dirname, const bigint& p, int lg2)
 {
   if (p == 0)
