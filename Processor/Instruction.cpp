@@ -18,28 +18,6 @@
 #include <bitset>
 
 
-// Convert modp to signed bigint of a given bit length
-void to_signed_bigint(bigint& bi, const gfp& x, int len)
-{
-  to_bigint(bi, x,true);
-  int neg;
-  // get sign and abs(x)
-  bigint p_half=(gfp::pr()-1)/2;
-  if (mpz_cmp(bi.get_mpz_t(), p_half.get_mpz_t()) < 0)
-    neg = 0;
-  else
-  {
-    bi = gfp::pr() - bi;
-    neg = 1;
-  }
-  // reduce to range -2^(len-1), ..., 2^(len-1)
-  bigint one = 1;
-  bi &= (one << len) - 1;
-  if (neg)
-    bi = -bi;
-}
-
-
 void Instruction::parse(istream& s)
 {
   n=0; start.resize(0);
@@ -351,13 +329,6 @@ void BaseInstruction::parse_operands(istream& s, int pos)
         break;
       case REQBL:
           n = get_int(s);
-    	  /*
-        if (n > 0 && gfp::pr() < bigint(1) << (n-1))
-          {
-            cout << "Tape requires prime of bit length " << n << endl;
-            throw invalid_params();
-          }
-          */
         break;
       case GREQBL:
           n = get_int(s);
@@ -848,34 +819,18 @@ void Instruction::execute(Processor& Proc) const
         Proc.write_C2(r[0],Proc.temp.ans2);
         break;
       case MODC:
-        to_bigint(Proc.temp.aa, Proc.read_Cp(r[1]), true);
-        to_bigint(Proc.temp.aa2, Proc.read_Cp(r[2]), true);
-        mpz_fdiv_r(Proc.temp.aa.get_mpz_t(), Proc.temp.aa.get_mpz_t(), Proc.temp.aa2.get_mpz_t());
-        to_gfp(Proc.temp.ansp, Proc.temp.aa);
-        Proc.write_Cp(r[0],Proc.temp.ansp);
+    	exit(EBADR);
         break;
       case LEGENDREC:
-        to_bigint(Proc.temp.aa, Proc.read_Cp(r[1]), true);
-        Proc.temp.aa = mpz_legendre(Proc.temp.aa.get_mpz_t(), gfp::pr().get_mpz_t());
-        to_gfp(Proc.temp.ansp, Proc.temp.aa);
-        Proc.write_Cp(r[0], Proc.temp.ansp);
+    	exit(EBADR);
         break;
       case DIGESTC:
-      {
-        octetStream o;
-        to_bigint(Proc.temp.aa, Proc.read_Cp(r[1]), true);
-
-        to_gfp(Proc.temp.ansp, Proc.temp.aa);
-        Proc.temp.ansp.pack(o);
-        // keep first n bytes
-        to_gfp(Proc.temp.ansp, o.check_sum(n));
-        Proc.write_Cp(r[0], Proc.temp.ansp);
-      }
+    	exit(EBADR);
         break;
       case DIVCI:
         if (n == 0)
           throw Processor_Error("Division by immediate zero");
-        to_gfp(Proc.temp.ansp,n%gfp::pr());
+        Proc.temp.ansp.assign(n);
         Proc.temp.ansp.invert();
         Proc.temp.ansp.mul(Proc.read_Cp(r[1]));
         Proc.write_Cp(r[0],Proc.temp.ansp);
@@ -889,9 +844,7 @@ void Instruction::execute(Processor& Proc) const
         Proc.write_C2(r[0],Proc.temp.ans2);
         break;
       case MODCI:
-        to_bigint(Proc.temp.aa, Proc.read_Cp(r[1]), true);
-        to_gfp(Proc.temp.ansp, mpz_fdiv_ui(Proc.temp.aa.get_mpz_t(), n));
-        Proc.write_Cp(r[0],Proc.temp.ansp);
+    	exit(EBADR);
         break;
       case GMULBITC:
   #ifdef DEBUG
@@ -1191,31 +1144,16 @@ void Instruction::execute(Processor& Proc) const
 	#endif
         break;
       case ANDCI:
-        Proc.temp.aa=n;
-	#ifdef DEBUG
-           Proc.temp.ansp.AND(Proc.read_Cp(r[1]),Proc.temp.aa);
-           Proc.write_Cp(r[0],ansp);
-	#else
-           Proc.get_Cp_ref(r[0]).AND(Proc.read_Cp(r[1]),Proc.temp.aa);
-	#endif
+        Proc.temp.ansp.assign(n);
+        Proc.get_Cp_ref(r[0]).AND(Proc.read_Cp(r[1]),Proc.temp.ansp);
         break;
       case GANDCI:
         Proc.temp.ans2.assign(n);
-	#ifdef DEBUG
-           Proc.temp.ans2.AND(Proc.temp.ans2,Proc.read_C2(r[1]));
-           Proc.write_C2(r[0],Proc.temp.ans2);
-	#else
-           Proc.get_C2_ref(r[0]).AND(Proc.temp.ans2,Proc.read_C2(r[1]));
-	#endif
+        Proc.get_C2_ref(r[0]).AND(Proc.temp.ans2,Proc.read_C2(r[1]));
         break;
       case XORCI:
-        Proc.temp.aa=n;
-	#ifdef DEBUG
-           ansp.XOR(Proc.read_Cp(r[1]),Proc.temp.aa);
-           Proc.write_Cp(r[0],Proc.temp.ansp);
-	#else
-           Proc.get_Cp_ref(r[0]).XOR(Proc.read_Cp(r[1]),Proc.temp.aa);
-	#endif
+    	Proc.temp.ansp.assign(n);
+        Proc.get_Cp_ref(r[0]).XOR(Proc.read_Cp(r[1]),Proc.temp.ansp);
         break;
       case GXORCI:
         Proc.temp.ans2.assign(n);
@@ -1227,14 +1165,9 @@ void Instruction::execute(Processor& Proc) const
 	#endif
         break;
       case ORCI:
-        Proc.temp.aa=n;
-	#ifdef DEBUG
-           Proc.temp.ansp.OR(Proc.read_Cp(r[1]),Proc.temp.aa);
-           Proc.write_Cp(r[0],Proc.temp.ansp);
-	#else
-	   Proc.get_Cp_ref(r[0]).OR(Proc.read_Cp(r[1]),Proc.temp.aa);
-	#endif
-        break;
+    	  Proc.temp.ansp=n;
+    	  Proc.get_Cp_ref(r[0]).OR(Proc.read_Cp(r[1]),Proc.temp.ansp);
+    	  break;
       case GORCI:
         Proc.temp.ans2.assign(n);
 	#ifdef DEBUG
@@ -1246,13 +1179,7 @@ void Instruction::execute(Processor& Proc) const
         break;
       // Note: Fp version has different semantics for NOTC than GNOTC
       case NOTC:
-        to_bigint(Proc.temp.aa, Proc.read_Cp(r[1]), true);
-        mpz_com(Proc.temp.aa.get_mpz_t(), Proc.temp.aa.get_mpz_t());
-        Proc.temp.aa2 = 1;
-        Proc.temp.aa2 <<= n;
-        Proc.temp.aa += Proc.temp.aa2;
-        to_gfp(Proc.temp.ansp, Proc.temp.aa);
-        Proc.write_Cp(r[0],Proc.temp.ansp);
+    	exit(EBADR);
         break;
       case GNOTC:
 	#ifdef DEBUG
@@ -1263,26 +1190,10 @@ void Instruction::execute(Processor& Proc) const
 	#endif
         break;
       case SHLC:
-        to_bigint(Proc.temp.aa,Proc.read_Cp(r[2]), true);
-        if (Proc.temp.aa > 63)
-          throw not_implemented();
-	#ifdef DEBUG
-           Proc.temp.ansp.SHL(Proc.read_Cp(r[1]),Proc.temp.aa);
-	   Proc.write_Cp(r[0],Proc.temp.ansp);
-	#else
-           Proc.get_Cp_ref(r[0]).SHL(Proc.read_Cp(r[1]),Proc.temp.aa);
-	#endif
+    	exit(EBADR);
         break;
       case SHRC:
-        to_bigint(Proc.temp.aa,Proc.read_Cp(r[2]), true);
-        if (Proc.temp.aa > 63)
-          throw not_implemented();
-	#ifdef DEBUG
-           Proc.temp.ansp.SHR(Proc.read_Cp(r[1]),Proc.temp.aa);
-	   Proc.write_Cp(r[0],Proc.temp.ansp);
-	#else
-           Proc.get_Cp_ref(r[0]).SHR(Proc.read_Cp(r[1]),Proc.temp.aa);
-	#endif
+    	exit(EBADR);
         break;
       case SHLCI:
 	#ifdef DEBUG
@@ -1458,30 +1369,6 @@ void Instruction::execute(Processor& Proc) const
       case PRINTFLOATPLAIN:
         if (Proc.P.my_num() == 0)
           {
-        	/* original(start)
-            gfp v = Proc.read_Cp(start[0]);
-            gfp p = Proc.read_Cp(start[1]);
-            gfp z = Proc.read_Cp(start[2]);
-            gfp s = Proc.read_Cp(start[3]);
-            to_bigint(Proc.temp.aa, v);
-            // MPIR can't handle more precision in exponent
-            to_signed_bigint(Proc.temp.aa2, p, 31);
-            long exp = Proc.temp.aa2.get_si();
-            mpf_class res = Proc.temp.aa;
-            if (exp > 0)
-              mpf_mul_2exp(res.get_mpf_t(), res.get_mpf_t(), exp);
-            else
-              mpf_div_2exp(res.get_mpf_t(), res.get_mpf_t(), -exp);
-            if (z.is_one())
-              res = 0;
-            if (!s.is_zero())
-              res *= -1;
-            if (not z.is_bit() or not s.is_bit())
-              throw Processor_Error("invalid floating point number");
-            cout << res << flush;
-
-              original(stop)
-        	 */
         	int flag = 0;
         	//flag = 1: binary, flag = 0 : decimal, flag = 2: hexadecimal
         	uint64_t v = Proc.read_Cp(start[0]).get_ring();

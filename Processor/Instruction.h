@@ -295,7 +295,6 @@ enum SecrecyType {
 struct TempVars {
   gf2n ans2; Share<gf2n> Sans2;
   gfp ansp;  Share<gfp>  Sansp;
-  bigint aa,aa2;
   // INPUT and LDSI
   gfp rrp,tp,tmpp;
   gfp xip;

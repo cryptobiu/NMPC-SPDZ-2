@@ -7,7 +7,6 @@
 using namespace std;
 
 #include "Math/gf2n.h"
-#include "Math/bigint.h"
 #include "Math/field_types.h"
 #include "Tools/random.h"
 
@@ -30,10 +29,6 @@ class gfp
 
   typedef gfp value_type;
 
-  static void init_field(const bigint&,bool)
-    { }
-  static bigint pr()   
-    { return 0; }
   static int t()
     { return 0;  }
 
@@ -41,7 +36,7 @@ class gfp
   static char type_char() { return 'p'; }
   static string type_string() { return "gfp"; }
 
-  static int size() { return t() * sizeof(mp_limb_t); }
+  static int size() { return sizeof(SPDZEXT_VALTYPE); }
 
   void assign(const gfp& g) {
 	  a_ring = g.a_ring;
@@ -69,7 +64,6 @@ class gfp
   gfp(const gfp& g) : a_ring(g.a_ring)  { }
   gfp(const __m128i& x) { *this=x; }
   gfp(const int128& x) { *this=x.a; }
-  gfp(const bigint& ) { }
   gfp(int x)         { assign(x); }
   ~gfp()             { ; }
 
@@ -176,9 +170,6 @@ class gfp
   void power(long /*i*/)
     { /*Power(a,a,i,ZpD);*/ }
 
-  // deterministic square root
-  gfp sqrRoot();
-
   void randomize(PRNG& /*G*/)
     { /*a.randomize(G,ZpD);*/ }
   // faster randomization, see implementation for explanation
@@ -213,13 +204,8 @@ class gfp
   void AND(const gfp& x,const gfp& y);
   void XOR(const gfp& x,const gfp& y);
   void OR(const gfp& x,const gfp& y);
-  void AND(const gfp& x,const bigint& y);
-  void XOR(const gfp& x,const bigint& y);
-  void OR(const gfp& x,const bigint& y);
   void SHL(const gfp& x,int n);
   void SHR(const gfp& x,int n);
-  void SHL(const gfp& x,const bigint& n);
-  void SHR(const gfp& x,const bigint& n);
 
   gfp operator&(const gfp& x) { gfp res; res.AND(*this, x); return res; }
   gfp operator^(const gfp& x) { gfp res; res.XOR(*this, x); return res; }
@@ -227,19 +213,8 @@ class gfp
   gfp operator<<(int i) { gfp res; res.SHL(*this, i); return res; }
   gfp operator>>(int i) { gfp res; res.SHR(*this, i); return res; }
 
-  // Pack and unpack in native format
-  //   i.e. Dont care about conversion to human readable form
-  void pack(octetStream& /*o*/) const
-    { /*a.pack(o,ZpD);*/ }
-  void unpack(octetStream& /*o*/)
-    { /*a.unpack(o,ZpD);*/ }
-
-
-  // Convert representation to and from a bigint number
-  friend void to_bigint(bigint& /*ans*/,const gfp& /*x*/,bool /*reduce=true*/)
-    { /*to_bigint(ans,x.a,x.ZpD,reduce);*/ }
-  friend void to_gfp(gfp& /*ans*/,const bigint& /*x*/)
-    { /*to_modp(ans.a,x,ans.ZpD);*/ }
+  void pack(octetStream& os) const {  os.append((octet*) &a_ring, sizeof(SPDZEXT_VALTYPE)); }
+  void unpack(octetStream& os) { os.consume((octet*) a_ring, sizeof(SPDZEXT_VALTYPE)); }
 };
 
 

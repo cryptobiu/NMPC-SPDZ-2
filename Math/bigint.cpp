@@ -96,12 +96,6 @@ int powerMod(int x,int e,int p)
 }
 
 
-bigint::bigint(const gfp& x)
-{
-  to_bigint(*this, x,true);
-}
-
-
 size_t bigint::report_size(ReportType type) const
 {
   size_t res = 0;

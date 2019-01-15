@@ -90,10 +90,10 @@ int main(int argc, const char** argv) {
 
 	int n; *in >> n;
 	for (int i = 0; i < n; ++i) {
-		bigint a;
+		SPDZEXT_VALTYPE a;
 		*in >> a;
 		gfp b;
-		to_gfp(b, a);
+		b.assign(a);
 		b.output(*out, false);
 	}
 	if (in->fail())

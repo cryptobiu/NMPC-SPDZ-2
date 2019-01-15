@@ -95,19 +95,16 @@ void send_private_inputs(vector<gfp>& values, vector<int>& sockets, int nparties
 void initialise_fields(const string& dir_prefix)
 {
   int lg2;
-  bigint p;
 
   string filename = dir_prefix + "Params-Data";
   cout << "loading params from: " << filename << endl;
 
   ifstream inpf(filename.c_str());
   if (inpf.fail()) { throw file_error(filename.c_str()); }
-  inpf >> p;
   inpf >> lg2;
 
   inpf.close();
 
-  //gfp::init_field(p);
   gf2n::init_field(lg2);
 }
 
