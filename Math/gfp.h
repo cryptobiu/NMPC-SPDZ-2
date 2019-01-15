@@ -7,7 +7,6 @@
 using namespace std;
 
 #include "Math/gf2n.h"
-#include "Math/modp.h"
 #include "Math/Zp_Data.h"
 #include "Math/field_types.h"
 #include "Tools/random.h"
@@ -24,9 +23,6 @@ using namespace std;
 
 class gfp
 {
-  //modp a;
-  //static Zp_Data ZpD;
-
   SPDZEXT_VALTYPE a_ring;
   uint32_t precision;
 
@@ -34,14 +30,12 @@ class gfp
 
   typedef gfp value_type;
 
-  static void init_field(const bigint& /*p*/,bool /*mont=true*/)
-    { /*ZpD.init(p,mont);*/ }
+  static void init_field(const bigint&,bool)
+    { }
   static bigint pr()   
-    { return 0;/*ZpD.pr;*/ }
+    { return 0; }
   static int t()
-    { return 0;/*ZpD.get_t();*/  }
-  /*static Zp_Data& get_ZpD()
-    { return ZpD; }*/
+    { return 0;  }
 
   static DataFieldType field_type() { return DATA_MODP; }
   static char type_char() { return 'p'; }
@@ -55,7 +49,7 @@ class gfp
   void assign_zero()        {
 	  a_ring = 0;
   }
-  void assign_one()         { /*assignOne(a,ZpD);*/ }
+  void assign_one()         { }
   void assign(word aa)      {
 	  a_ring = (SPDZEXT_VALTYPE)aa;
   }
@@ -65,23 +59,20 @@ class gfp
   void assign(int aa)       {
 	  a_ring = (SPDZEXT_VALTYPE)aa;
   }
-  void assign(const char* /*buffer*/) { /*a.assign(buffer, ZpD.get_t());*/ }
-
-  modp get() const          { modp a; return a; }
+  void assign(const char*) { }
 
   void assign_ring(SPDZEXT_VALTYPE aa) { a_ring = aa; }
 
   SPDZEXT_VALTYPE get_ring() const { return a_ring; }
 
   // Assumes prD behind x is equal to ZpD
-  void assign(modp& /*x*/) { /*a=x;*/ }
+  void assign(modp&) { }
   
-  gfp()              { /*assignZero(a,ZpD);*/ }
-  gfp(const gfp& g) : a_ring(g.a_ring)  { /*a=g.a;*/ }
-  gfp(const modp& /*g*/) { /*a=g;*/ }
+  gfp()              { }
+  gfp(const gfp& g) : a_ring(g.a_ring)  { }
   gfp(const __m128i& x) { *this=x; }
   gfp(const int128& x) { *this=x.a; }
-  gfp(const bigint& /*x*/) { /*to_modp(a, x, ZpD);*/ }
+  gfp(const bigint& ) { }
   gfp(int x)         { assign(x); }
   ~gfp()             { ; }
 
