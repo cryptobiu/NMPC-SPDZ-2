@@ -30,7 +30,7 @@ OBJS = $(COMPLETE)
 DEPS := $(OBJS:.o=.d)
 
 
-all: gen_input online externalIO
+all: gen_input online
 
 ifeq ($(USE_NTL),1)
 all: overdrive she-offline
@@ -46,8 +46,6 @@ online: Server.x Player-Online.x
 #offline: $(OT_EXE) Check-Offline.x
 
 gen_input: gen_input_f2n.x gen_input_fp.x
-
-externalIO: client-setup.x bankers-bonus-client.x bankers-bonus-commsec-client.x
 
 she-offline: Check-Offline.x
 
@@ -81,15 +79,6 @@ gen_input_f2n.x: Scripts/gen_input_f2n.cpp $(COMMON)
 
 gen_input_fp.x: Scripts/gen_input_fp.cpp $(COMMON)
 	$(CXX) $(CFLAGS) Scripts/gen_input_fp.cpp	-o gen_input_fp.x $(COMMON) $(LDLIBS)
-
-client-setup.x: client-setup.cpp $(COMMON) $(PROCESSOR)
-	$(CXX) $(CFLAGS) -o $@ $^ $(LDLIBS)
-
-bankers-bonus-client.x: ExternalIO/bankers-bonus-client.cpp $(COMMON) $(PROCESSOR)
-	$(CXX) $(CFLAGS) -o $@ $^ $(LDLIBS)
-
-bankers-bonus-commsec-client.x: ExternalIO/bankers-bonus-commsec-client.cpp $(COMMON) $(PROCESSOR)
-	$(CXX) $(CFLAGS) -o $@ $^ $(LDLIBS)
 
 ifeq ($(USE_NTL),1)
 simple-offline.x: $(COMMON) simple-offline.cpp
