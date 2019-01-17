@@ -1557,10 +1557,10 @@ void Instruction::execute(Processor& Proc) const
         Proc.read_client_public_key(Proc.read_Ci(r[0]), start);
         break;
       case INITSECURESOCKET:
-        Proc.init_secure_socket(Proc.read_Ci(r[i]), start);
+    	abort();
         break;
       case RESPSECURESOCKET:
-        Proc.resp_secure_socket(Proc.read_Ci(r[i]), start);
+        abort();
         break;
       case READSOCKETINT:
         Proc.read_socket_ints(Proc.read_Ci(r[0]), start);

@@ -304,10 +304,6 @@ class Processor : public ProcessorBase
   void read_socket_ints(int client_id, const vector<int>& registers);
   // Setup client public key
   void read_client_public_key(int client_id, const vector<int>& registers);
-  void init_secure_socket(int client_id, const vector<int>& registers);
-  void init_secure_socket_internal(int client_id, const vector<int>& registers);
-  void resp_secure_socket(int client_id, const vector<int>& registers);
-  void resp_secure_socket_internal(int client_id, const vector<int>& registers);
   
   void write_socket(const RegType reg_type, const SecrecyType secrecy_type, const bool send_macs,
                              int socket_id, int message_type, const vector<int>& registers);
