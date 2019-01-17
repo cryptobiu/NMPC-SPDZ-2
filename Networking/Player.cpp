@@ -3,7 +3,6 @@
 
 #include "Player.h"
 #include "Exceptions/Exceptions.h"
-#include "Networking/STS.h"
 
 #include <sys/select.h>
 #include <utility>

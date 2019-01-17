@@ -2,7 +2,6 @@
 
 
 #include "Processor/Processor.h"
-#include "Networking/STS.h"
 #include "Auth/MAC_Check.h"
 
 #include <sodium.h>
@@ -114,7 +113,6 @@ void Processor::reset(const Program& program,int arg)
 // RegType and SecrecyType determines how registers are read and the socket stream is packed.
 // If message_type is > 0, send message_type in bytes 0 - 3, to allow an external client to
 //  determine the data structure being sent in a message.
-// Encryption is enabled if key material (for DH Auth Encryption and/or STS protocol) has been already setup.
 void Processor::write_socket(const RegType reg_type, const SecrecyType secrecy_type, const bool send_macs,
                              int socket_id, int message_type, const vector<int>& registers)
 {
@@ -161,7 +159,6 @@ void Processor::write_socket(const RegType reg_type, const SecrecyType secrecy_t
     socket_stream.encrypt(it->second);
   }
 
-  // Apply STS commsec encryption if session keys have been created.
   try {
     maybe_encrypt_sequence(socket_id);
     socket_stream.Send(external_clients.external_client_sockets[socket_id]);
