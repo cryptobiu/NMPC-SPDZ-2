@@ -2,7 +2,6 @@
 
 
 #include <fcntl.h>
-#include <sodium.h>
 
 #include "octetStream.h"
 #include <string.h>
