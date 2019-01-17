@@ -5,7 +5,6 @@
 #include "Networking/STS.h"
 #include "Auth/MAC_Check.h"
 
-#include "Auth/fake-stuff.h"
 #include <sodium.h>
 #include <string>
 
