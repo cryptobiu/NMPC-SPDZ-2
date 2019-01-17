@@ -27,8 +27,6 @@
 #include <stdio.h>
 #include <iostream>
 
-#include <sodium.h>
- 
 using namespace std;
 
 class octetStream

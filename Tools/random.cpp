@@ -13,12 +13,14 @@ PRNG::PRNG() : cnt(0)
   #ifdef USE_AES
     useC=(Check_CPU_support_AES()==0);
   #endif
-  
+  srand((int)time(NULL));
 }
 
 void PRNG::ReSeed()
 {
-  randombytes_buf(seed, SEED_SIZE);
+  //randombytes_buf(seed, SEED_SIZE);
+	for(int i = 0; i < SEED_SIZE; ++i)
+		seed[i] = (octet)rand();
   InitSeed();
 }
 

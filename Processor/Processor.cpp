@@ -4,7 +4,6 @@
 #include "Processor/Processor.h"
 #include "Auth/MAC_Check.h"
 
-#include <sodium.h>
 #include <string>
 
 #include <sys/stat.h>
@@ -252,8 +251,6 @@ void Processor::read_client_public_key(int client_id, const vector<int>& registe
   for(unsigned int i = 0; i < registers.size(); i++) {
     client_public_key[i] = (int&)get_Ci_ref(registers[i]);
   }
-
-  external_clients.generate_session_key_for_client(client_id, client_public_key);  
 }
 
 // Read share data from a file starting at file_pos until registers filled.

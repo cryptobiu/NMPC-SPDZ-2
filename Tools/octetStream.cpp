@@ -4,12 +4,16 @@
 #include <fcntl.h>
 
 #include "octetStream.h"
+
+#include <sodium.h>
+
 #include <string.h>
 #include "Networking/sockets.h"
 #include "Tools/sha1.h"
 #include "Exceptions/Exceptions.h"
 #include "Networking/data.h"
 #include "Tools/int.h"
+
 
 void octetStream::clear()
 {
@@ -83,7 +87,6 @@ bool octetStream::equals(const octetStream& a) const
     { if (data[i]!=a.data[i]) { return false; } }
   return true;
 }
-
 
 void octetStream::append_random(size_t num)
 {
