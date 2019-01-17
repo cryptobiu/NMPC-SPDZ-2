@@ -3,7 +3,6 @@
 
 #include "Tools/random.h"
 #include <stdio.h>
-#include <sodium.h>
 
 #include <iostream>
 using namespace std;
