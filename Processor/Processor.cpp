@@ -152,12 +152,6 @@ void Processor::write_socket(const RegType reg_type, const SecrecyType secrecy_t
     }
   }
 
-  // Apply DH Auth encryption if session keys have been created.
-  map<int,octet*>::iterator it = external_clients.symmetric_client_keys.find(socket_id);
-  if (it != external_clients.symmetric_client_keys.end()) {
-    socket_stream.encrypt(it->second);
-  }
-
   try {
     socket_stream.Send(external_clients.external_client_sockets[socket_id]);
   }
@@ -220,11 +214,6 @@ void Processor::read_socket_private(int client_id, const vector<int>& registers,
   socket_stream.reset_write_head();
   socket_stream.Receive(external_clients.external_client_sockets[client_id]);
 
-  map<int,octet*>::iterator it = external_clients.symmetric_client_keys.find(client_id);
-  if (it != external_clients.symmetric_client_keys.end())
-  {
-    socket_stream.decrypt(it->second);
-  }
   for (int i = 0; i < m; i++)
   {
     temp.ansp.unpack(socket_stream);

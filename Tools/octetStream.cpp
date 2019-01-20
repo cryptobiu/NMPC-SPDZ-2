@@ -14,7 +14,6 @@
 
 #include <openssl/sha.h>
 #include <openssl/rand.h>
-#include <sodium.h>
 
 void octetStream::clear()
 {
@@ -193,35 +192,6 @@ void octetStream::exchange(int send_socket, int receive_socket)
     }
   len = new_len;
   reset_read_head();
-}
-
-void octetStream::encrypt(const octet* key)
-{
-  octet nonce[crypto_secretbox_NONCEBYTES];
-  randombytes_buf(nonce, sizeof nonce);
-  int message_len_bytes = len;
-  resize(len + crypto_secretbox_MACBYTES + crypto_secretbox_NONCEBYTES);
-
-  // Encrypt data in-place
-  crypto_secretbox_easy(data, data, message_len_bytes, nonce, key);
-  // Adjust length to account for MAC, then append nonce
-  len += crypto_secretbox_MACBYTES;
-  append(nonce, sizeof nonce);
-}
-
-void octetStream::decrypt(const octet* key)
-{
-  int ciphertext_len = len - crypto_box_NONCEBYTES;
-  // Numbers are typically 24U + 16U so cast to int is safe.
-  if (len < (int)(crypto_box_NONCEBYTES + crypto_secretbox_MACBYTES))
-  {
-    throw Processor_Error("Cannot decrypt octetStream: ciphertext too short");
-  }
-  if (crypto_secretbox_open_easy(data, data, ciphertext_len, data + ciphertext_len, key) != 0)
-  {
-    throw Processor_Error("octetStream decryption failed!");
-  }
-  rewind_write_head(crypto_box_NONCEBYTES + crypto_secretbox_MACBYTES);
 }
 
 void octetStream::input(istream& s)

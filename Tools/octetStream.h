@@ -122,11 +122,6 @@ class octetStream
   void Receive(int socket_num);
   void ReceiveExpected(int socket_num, size_t expected);
 
-  // In-place authenticated encryption using sodium; key of length crypto_secretbox_KEYBYTES
-  // ciphertext = Enc(message) | MAC | nonce
-  void encrypt(const octet* key);
-  void decrypt(const octet* key);
-
   void exchange(int send_socket, int receive_socket);
 
   void input(istream& s);
