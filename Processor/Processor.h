@@ -384,8 +384,6 @@ class Processor : public ProcessorBase
   friend ostream& operator<<(ostream& s,const Processor& P);
 
   private:
-    void maybe_decrypt_sequence(int client_id);
-    void maybe_encrypt_sequence(int client_id);
 
     MPC_CTX spdz_gfp_ext_context;
     MPC_CTX spdz_gf2n_ext_context;

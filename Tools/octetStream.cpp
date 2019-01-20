@@ -5,8 +5,6 @@
 
 #include "octetStream.h"
 
-#include <sodium.h>
-
 #include <string.h>
 #include "Networking/sockets.h"
 #include "Tools/sha1.h"
@@ -14,6 +12,9 @@
 #include "Networking/data.h"
 #include "Tools/int.h"
 
+#include <openssl/sha.h>
+#include <openssl/rand.h>
+#include <sodium.h>
 
 void octetStream::clear()
 {
@@ -67,16 +68,16 @@ octetStream::octetStream(const octetStream& os)
 
 void octetStream::hash(octetStream& output) const
 {
-  crypto_generichash(output.data, crypto_generichash_BYTES_MIN, data, len, NULL, 0);
-  output.len=crypto_generichash_BYTES_MIN;
+	SHA256(data, len, output.data);
+	output.len=16;
 }
 
 
 octetStream octetStream::hash() const
 {
-  octetStream h(crypto_generichash_BYTES_MIN);
-  hash(h);
-  return h;
+	octetStream h(16);
+	hash(h);
+	return h;
 }
 
 
@@ -91,7 +92,7 @@ bool octetStream::equals(const octetStream& a) const
 void octetStream::append_random(size_t num)
 {
   resize(len+num);
-  randombytes_buf(data+len, num);
+  RAND_bytes(data+len, num);
   len+=num;
 }
 
@@ -200,7 +201,7 @@ void octetStream::encrypt_sequence(const octet* key, uint64_t counter)
   octet nonce[crypto_secretbox_NONCEBYTES];
   int i;
   int message_len_bytes = len;
-  randombytes_buf(nonce, sizeof nonce);
+  RAND_bytes(nonce, sizeof nonce);
   if(counter == UINT64_MAX) {
       throw Processor_Error("Encryption would overflow counter. Too many messages.");
   } else {

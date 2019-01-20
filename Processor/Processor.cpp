@@ -159,7 +159,6 @@ void Processor::write_socket(const RegType reg_type, const SecrecyType secrecy_t
   }
 
   try {
-    maybe_encrypt_sequence(socket_id);
     socket_stream.Send(external_clients.external_client_sockets[socket_id]);
   }
     catch (bad_value& e) {
@@ -181,7 +180,6 @@ void Processor::read_socket_ints(int client_id, const vector<int>& registers)
   int m = registers.size();
   socket_stream.reset_write_head();
   socket_stream.Receive(external_clients.external_client_sockets[client_id]);
-  maybe_decrypt_sequence(client_id);
   for (int i = 0; i < m; i++)
   {
     int val;
@@ -203,7 +201,6 @@ void Processor::read_socket_vector(int client_id, const vector<int>& registers)
   int m = registers.size();
   socket_stream.reset_write_head();
   socket_stream.Receive(external_clients.external_client_sockets[client_id]);
-  maybe_decrypt_sequence(client_id);
   for (int i = 0; i < m; i++)
   {
     get_C_ref<T>(registers[i]).unpack(socket_stream);
@@ -222,7 +219,6 @@ void Processor::read_socket_private(int client_id, const vector<int>& registers,
   int m = registers.size();
   socket_stream.reset_write_head();
   socket_stream.Receive(external_clients.external_client_sockets[client_id]);
-  maybe_decrypt_sequence(client_id);
 
   map<int,octet*>::iterator it = external_clients.symmetric_client_keys.find(client_id);
   if (it != external_clients.symmetric_client_keys.end())
@@ -453,26 +449,6 @@ ostream& operator<<(ostream& s,const Processor& P)
     }
 
   return s;
-}
-
-void Processor::maybe_decrypt_sequence(int client_id)
-{
-  map<int, pair<vector<octet>,uint64_t> >::iterator it_cs = external_clients.symmetric_client_commsec_recv_keys.find(client_id);
-  if (it_cs != external_clients.symmetric_client_commsec_recv_keys.end())
-  {
-    socket_stream.decrypt_sequence(&it_cs->second.first[0], it_cs->second.second);
-    it_cs->second.second++;
-  }
-}
-
-void Processor::maybe_encrypt_sequence(int client_id)
-{
-  map<int, pair<vector<octet>,uint64_t> >::iterator it_cs = external_clients.symmetric_client_commsec_send_keys.find(client_id);
-  if (it_cs != external_clients.symmetric_client_commsec_send_keys.end())
-  {
-    socket_stream.encrypt_sequence(&it_cs->second.first[0], it_cs->second.second);
-    it_cs->second.second++;
-  }
 }
 
 template void Processor::POpen_Start(const vector<int>& reg,const Player& P,MAC_Check<gf2n>& MC,int size);
