@@ -195,55 +195,6 @@ void octetStream::exchange(int send_socket, int receive_socket)
   reset_read_head();
 }
 
-// Construct the ciphertext as `crypto_secretbox(pt, counter||random)`
-void octetStream::encrypt_sequence(const octet* key, uint64_t counter)
-{
-  octet nonce[crypto_secretbox_NONCEBYTES];
-  int i;
-  int message_len_bytes = len;
-  RAND_bytes(nonce, sizeof nonce);
-  if(counter == UINT64_MAX) {
-      throw Processor_Error("Encryption would overflow counter. Too many messages.");
-  } else {
-      counter++;
-  }
-  for(i=0; i<8; i++) {
-      nonce[i] = uint8_t ((counter >> (8*i)) & 0xFF);
-  }
-
-  resize(len + crypto_secretbox_MACBYTES + crypto_secretbox_NONCEBYTES);
-
-  // Encrypt data in-place
-  crypto_secretbox_easy(data, data, message_len_bytes, nonce, key);
-  // Adjust length to account for MAC, then append nonce
-  len += crypto_secretbox_MACBYTES;
-  append(nonce, sizeof nonce);
-}
-
-void octetStream::decrypt_sequence(const octet* key, uint64_t counter)
-{
-  int ciphertext_len = len - crypto_box_NONCEBYTES;
-  const octet *nonce = data + ciphertext_len;
-  int i;
-  uint64_t recvCounter=0;
-  // Numbers are typically 24U + 16U so cast to int is safe.
-  if (len < (int)(crypto_box_NONCEBYTES + crypto_secretbox_MACBYTES))
-  {
-    throw Processor_Error("Cannot decrypt octetStream: ciphertext too short");
-  }
-  for(i=7; i>=0; i--) {
-      recvCounter |= ((uint64_t) *(nonce + i)) << (i*8);
-  }
-  if(recvCounter != counter + 1) {
-      throw Processor_Error("Incorrect counter on stream.  Possible MITM.");
-  }
-  if (crypto_secretbox_open_easy(data, data, ciphertext_len, nonce, key) != 0)
-  {
-    throw Processor_Error("octetStream decryption failed!");
-  }
-  rewind_write_head(crypto_box_NONCEBYTES + crypto_secretbox_MACBYTES);
-}
-
 void octetStream::encrypt(const octet* key)
 {
   octet nonce[crypto_secretbox_NONCEBYTES];

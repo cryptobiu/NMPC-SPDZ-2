@@ -122,14 +122,6 @@ class octetStream
   void Receive(int socket_num);
   void ReceiveExpected(int socket_num, size_t expected);
 
-  // In-place authenticated encryption using sodium; key of length crypto_generichash_BYTES
-  // ciphertext = Enc(message) | MAC | counter
-  //
-  // This is much like 'encrypt' but uses a deterministic counter for the nonce,
-  // allowing enforcement of message order.
-  void encrypt_sequence(const octet* key, uint64_t counter);
-  void decrypt_sequence(const octet* key, uint64_t counter);
-
   // In-place authenticated encryption using sodium; key of length crypto_secretbox_KEYBYTES
   // ciphertext = Enc(message) | MAC | nonce
   void encrypt(const octet* key);
